@@ -640,7 +640,8 @@ function pantallaChat(medicoId) {
         <div class="thread">${vacioCTA}${mensajes}</div>
       </div>
       <div class="composer">
-        <label class="cam-btn" for="input-foto" style="cursor:pointer">📷</label>
+        <label class="cam-btn" for="input-foto" style="cursor:pointer" title="Tomar foto">📷</label>
+        <label class="cam-btn" for="input-archivo" style="cursor:pointer;background:var(--navy)" title="Adjuntar archivo o imagen">📎</label>
         <input class="composer-input" placeholder="Nota rápida..." id="inp-nota"
           onkeydown="if(event.key==='Enter'&&this.value.trim())enviarNota()"/>
         <button class="consulta-btn" onclick="nuevaConsulta()">+ Consulta</button>
@@ -652,7 +653,11 @@ function pantallaChat(medicoId) {
         <div class="sheet-title">Agregar a ${medicoActual.nombre.split(' ')[0]} ${medicoActual.nombre.split(' ')[1]||''}</div>
         <button class="sheet-opt" onclick="agregarFoto()">
           <span class="ico">📷</span>
-          <div><div class="lbl">Foto de documento</div><div class="sub">Receta, análisis, estudio, indicación...</div></div>
+          <div><div class="lbl">Tomar foto</div><div class="sub">Abre la cámara para fotografiar un documento</div></div>
+        </button>
+        <button class="sheet-opt" onclick="cerrarSheet();document.getElementById('input-archivo')?.click()">
+          <span class="ico">📎</span>
+          <div><div class="lbl">Adjuntar imagen o PDF</div><div class="sub">Desde galería, archivos o iCloud</div></div>
         </button>
         <button class="sheet-opt" onclick="agregarNota()">
           <span class="ico">📝</span>
@@ -666,6 +671,7 @@ function pantallaChat(medicoId) {
       </div>
     </div>
     <input type="file" id="input-foto" accept="image/*" capture="environment" style="display:none" onchange="procesarFoto(event)"/>
+    <input type="file" id="input-archivo" accept="image/*,.pdf,.doc,.docx,.jpg,.jpeg,.png,.heic" style="display:none" onchange="procesarFoto(event)"/>
   `, 'adelante');
 
   setTimeout(()=>{ const el=document.getElementById('thread-scroll'); if(el) el.scrollTop=el.scrollHeight; }, 60);
