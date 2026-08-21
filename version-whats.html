@@ -75,42 +75,63 @@ body{
 /* Avatar */
 .av{border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700;color:white}
 
-/* Hilo */
-.thread{padding:12px 14px;display:flex;flex-direction:column;gap:10px}
-.msg-sys{align-self:center;font-size:11px;color:var(--ink-faint);background:rgba(255,255,255,.85);padding:3px 11px;border-radius:999px;border:1px solid var(--line);margin:4px 0;text-align:center}
+/* ── FEED ──────────────────────────────────────────────── */
+.thread{padding:10px 12px;display:flex;flex-direction:column;gap:10px}
 
-.msg-yo{align-self:flex-end;max-width:82%;background:var(--teal-soft);border:1px solid rgba(0,201,167,.2);border-radius:12px 2px 12px 12px;padding:10px 12px}
-.msg-luisa{align-self:flex-start;max-width:82%;background:var(--card);border:1px solid var(--line);border-radius:2px 12px 12px 12px;padding:10px 12px}
+/* Separador de fecha */
+.msg-sys{
+  display:flex;align-items:center;gap:8px;
+  font-size:11px;color:var(--ink-faint);margin:6px 0;
+}
+.msg-sys::before,.msg-sys::after{content:'';flex:1;height:1px;background:var(--line)}
 
-.msg-tag{font-size:10.5px;font-weight:700;margin-bottom:5px;text-transform:uppercase;letter-spacing:.3px}
-.tag-receta{color:var(--purple-ink)}
-.tag-estudio{color:#0369A1}
-.tag-resultado{color:var(--teal-deep)}
-.tag-diagnostico{color:var(--red-ink)}
-.tag-nota{color:var(--navy)}
-.tag-cita{color:var(--amber-ink)}
-.tag-referencia{color:#059669}
-.tag-doc{color:var(--teal-deep)}
+/* Tarjeta feed — ancho completo */
+.feed-card{
+  background:var(--card);border:1px solid var(--line);
+  border-radius:14px;overflow:hidden;
+  box-shadow:0 1px 4px rgba(15,31,61,.06);
+}
+/* Cabecera de color según tipo */
+.feed-header{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;border-bottom:1px solid var(--line);
+}
+.feed-ico{font-size:20px;line-height:1;flex-shrink:0}
+.feed-type{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.feed-body{padding:12px 14px;font-size:13.5px;color:var(--ink);line-height:1.55}
+.feed-foot{
+  display:flex;align-items:center;justify-content:flex-end;gap:6px;
+  padding:6px 14px 10px;font-size:10.5px;color:var(--ink-faint);
+}
+.tick{color:var(--teal);font-size:11px}
 
-.msg-body{font-size:13.5px;color:var(--ink);line-height:1.55}
-.msg-time{font-size:10.5px;color:var(--ink-faint);margin-top:6px;text-align:right}
-.tick{color:var(--teal);font-size:11px;margin-left:3px}
+/* Colores de cabecera por tipo */
+.h-receta    {background:#F3E8FF} .h-receta    .feed-type{color:var(--purple-ink)}
+.h-resultado {background:#ECFDF5} .h-resultado .feed-type{color:var(--teal-deep)}
+.h-estudio   {background:#EFF6FF} .h-estudio   .feed-type{color:#0369A1}
+.h-diagnostico{background:#FEE2E2}.h-diagnostico .feed-type{color:var(--red-ink)}
+.h-cita      {background:var(--amber)} .h-cita .feed-type{color:var(--amber-ink)}
+.h-nota      {background:var(--navy-soft)} .h-nota .feed-type{color:var(--navy)}
+.h-doc       {background:var(--teal-soft)} .h-doc .feed-type{color:var(--teal-deep)}
 
-/* Tarjetas dentro de mensaje */
-.med-card{background:var(--purple);border-radius:8px;padding:8px 10px;margin-top:6px}
+/* Sub-tarjetas dentro del feed */
+.med-card{background:var(--purple);border-radius:8px;padding:9px 11px;margin-top:8px}
 .med-card .mn{font-weight:700;color:var(--purple-ink);font-size:13px}
 .med-card .md{color:var(--ink-soft);font-size:12px;margin-top:2px}
-.lab-card{background:#EFF6FF;border-radius:8px;padding:8px 10px;margin-top:6px}
-.lab-card .lv{font-size:13px;color:var(--ink)}
-.lab-card .lv span{font-weight:700}
-.lab-card .lv .ok{color:var(--teal-deep)}
-.lab-card .lv .warn{color:var(--amber-ink)}
-.lab-card .lv .bad{color:var(--red-ink)}
-.cita-card{background:var(--amber);border-radius:8px;padding:8px 10px;margin-top:6px;display:flex;align-items:center;gap:8px}
-.cita-card .fecha{font-weight:700;color:var(--amber-ink);font-size:13px}
-.ia-block{margin-top:8px;padding:8px 10px;background:rgba(0,201,167,.08);border-left:3px solid var(--teal);border-radius:0 6px 6px 0;font-size:12.5px;color:#007A66;line-height:1.5}
-.chip-ia{display:inline-block;font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--teal-soft);color:var(--teal-deep);margin-top:5px}
-.alerta{margin-top:6px;font-size:11.5px;color:var(--amber-ink);background:var(--amber);border-radius:6px;padding:5px 8px}
+.lab-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);font-size:13px}
+.lab-row:last-child{border-bottom:none}
+.lab-row .lval{flex:1;color:var(--ink)}
+.lab-row .lref{font-size:11px;color:var(--ink-faint)}
+.ok{color:var(--teal-deep);font-weight:700}
+.warn{color:var(--amber-ink);font-weight:700}
+.bad{color:var(--red-ink);font-weight:700}
+.est-row{font-size:12.5px;color:#0369A1;padding:3px 0}
+.cita-big{display:flex;gap:12px;align-items:flex-start;margin-top:4px}
+.cita-big .cfecha{font-size:18px;font-weight:800;color:var(--amber-ink);line-height:1.2}
+.cita-big .cdet{font-size:12px;color:var(--ink-soft);margin-top:2px}
+.ia-block{margin-top:10px;padding:10px 12px;background:rgba(0,201,167,.07);border-left:3px solid var(--teal);border-radius:0 8px 8px 0;font-size:12.5px;color:#007A66;line-height:1.55}
+.chip-ia{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--teal-soft);color:var(--teal-deep);margin-top:8px}
+.alerta{margin-top:8px;font-size:12px;color:var(--amber-ink);background:var(--amber);border-radius:8px;padding:8px 10px;display:flex;gap:6px;align-items:flex-start}
 
 /* Composer */
 .composer{display:flex;align-items:center;gap:8px;padding:10px 12px;border-top:1px solid var(--line);background:var(--card);flex-shrink:0}
@@ -678,10 +699,22 @@ function pantallaChat(medicoId) {
 }
 
 // ─── RENDER DE MENSAJE ────────────────────────────────────
+// Metadatos por tipo de evento
+const TIPO_META = {
+  receta:     {ico:'💊', label:'Receta',           hdr:'h-receta'},
+  resultado:  {ico:'📊', label:'Resultado',         hdr:'h-resultado'},
+  estudio_orden:{ico:'🔬',label:'Estudios ordenados',hdr:'h-estudio'},
+  diagnostico:{ico:'🩺', label:'Diagnóstico',       hdr:'h-diagnostico'},
+  cita:       {ico:'📅', label:'Próxima cita',      hdr:'h-cita'},
+  nota:       {ico:'📝', label:'Nota',              hdr:'h-nota'},
+  doc:        {ico:'📄', label:'Documento',         hdr:'h-doc'},
+};
+
 function renderMensaje(v) {
   if (v.sistema) return `<div class="msg-sys">${v.sistema}</div>`;
 
-  const tick = v.guardado ? '<span class="tick">✓✓</span>' : '';
+  const tick  = v.guardado ? '<span class="tick">✓✓</span>' : '';
+  const meta  = TIPO_META[v.tipo||'nota'] || TIPO_META.nota;
 
   // Bloque IA
   let iaHTML = '';
@@ -693,50 +726,61 @@ function renderMensaje(v) {
   // Medicamentos
   let medsHTML = '';
   if (v.meds && v.meds.length) {
-    medsHTML = v.meds.map(m=>`<div class="med-card"><p class="mn">💊 ${m.mn}</p><p class="md">${m.md}</p></div>`).join('');
+    medsHTML = v.meds.map(m=>`
+      <div class="med-card">
+        <div class="mn">💊 ${m.mn}</div>
+        <div class="md">${m.md}</div>
+      </div>`).join('');
   }
 
-  // Resultados de lab
+  // Laboratorios
   let labsHTML = '';
   if (v.labs && v.labs.length) {
-    labsHTML = v.labs.map(l=>{
-      const cls = l.estado==='ok'?'ok':l.estado==='warn'?'warn':'bad';
-      const ico = l.estado==='ok'?'✓':l.estado==='warn'?'⚠':'✗';
-      return `<div class="lab-card"><p class="lv"><span class="${cls}">${ico}</span> ${l.val} <span style="color:var(--ink-faint);font-size:11px">· ${l.ref}</span></p></div>`;
-    }).join('');
+    labsHTML = `<div style="border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-top:8px">`
+      + v.labs.map(l=>{
+          const cls = l.estado==='ok'?'ok':l.estado==='warn'?'warn':'bad';
+          const ico = l.estado==='ok'?'✓':l.estado==='warn'?'⚠':'✗';
+          return `<div class="lab-row"><span class="${cls}">${ico}</span><span class="lval">${l.val}</span><span class="lref">${l.ref}</span></div>`;
+        }).join('')
+      + `</div>`;
   }
 
   // Estudios ordenados
   let estudiosHTML = '';
   if (v.estudios && v.estudios.length) {
-    estudiosHTML = `<div style="margin-top:8px;background:#EFF6FF;border-radius:8px;padding:8px 10px">`
-      + v.estudios.map(e=>`<div style="font-size:12.5px;color:#1D4ED8;padding:2px 0">🔬 ${e}</div>`).join('')
+    estudiosHTML = `<div style="background:#EFF6FF;border-radius:8px;padding:10px 12px;margin-top:8px">`
+      + v.estudios.map(e=>`<div class="est-row">🔬 ${e}</div>`).join('')
       + `</div>`;
   }
 
   // Próxima cita
   let citaHTML = '';
   if (v.cita) {
-    citaHTML = `<div class="cita-card">📅 <div><div class="fecha">${v.cita.fecha}</div><div style="font-size:12px;color:var(--ink-soft)">${v.cita.lugar||''} · ${v.cita.motivo||''}</div></div></div>`;
+    citaHTML = `<div class="cita-big">
+      <div class="cfecha">${v.cita.fecha}</div>
+      <div><div style="font-size:12.5px;font-weight:600;color:var(--ink)">${v.cita.motivo||''}</div>
+      <div class="cdet">${v.cita.lugar||''}</div></div>
+    </div>`;
   }
 
   // Alerta
   let alertaHTML = '';
-  if (v.alerta) alertaHTML = `<div class="alerta">${v.alerta}</div>`;
+  if (v.alerta) alertaHTML = `<div class="alerta"><span>⚠️</span><span>${v.alerta.replace('⚠️','').trim()}</span></div>`;
 
   // Chip IA
-  const chipIA = (v.ia||v.labs) ? '<span class="chip-ia">✓ Organizado por Luisa</span>' : '';
-
-  const tagClass = `tag-${v.tipo||'nota'}`;
-  const claseMsg = v.lado==='yo' ? 'msg-yo' : 'msg-luisa';
+  const chipIA = (v.ia||v.labs) ? `<div><span class="chip-ia">✦ Organizado por Luisa</span></div>` : '';
 
   return `
-    <div class="${claseMsg}">
-      <div class="msg-tag ${tagClass}">${v.tagLabel||''}</div>
-      <div class="msg-body">${v.cuerpo||''}</div>
-      ${medsHTML}${labsHTML}${estudiosHTML}${citaHTML}${iaHTML}${alertaHTML}
-      ${chipIA}
-      <div class="msg-time">${v.hora||''}${tick}</div>
+    <div class="feed-card">
+      <div class="feed-header ${meta.hdr}">
+        <span class="feed-ico">${meta.ico}</span>
+        <span class="feed-type">${meta.label}</span>
+      </div>
+      <div class="feed-body">
+        ${v.cuerpo ? `<div style="margin-bottom:${(v.meds||v.labs||v.estudios||v.cita||v.ia)?'8px':'0'}">${v.cuerpo}</div>` : ''}
+        ${medsHTML}${labsHTML}${estudiosHTML}${citaHTML}${iaHTML}${alertaHTML}${chipIA}
+      </div>
+      <div class="feed-foot">${v.hora||''}${tick}</div>
     </div>`;
 }
 
