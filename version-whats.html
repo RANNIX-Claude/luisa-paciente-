@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Luisa — Versión WhatsApp</title>
+<style>
+  :root {
+    --bg: #F5F7FA;
+    --card: #FFFFFF;
+    --paper: #F0F2F5;
+    --ink: #0F1F3D;
+    --ink-soft: #4B5C7A;
+    --ink-faint: #8A9BB8;
+    --line: #E2E8F0;
+    --navy: #1B3F72;
+    --navy-soft: #E8EEF7;
+    --teal: #00C9A7;
+    --teal-soft: #E0FAF5;
+    --teal-deep: #009E84;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: #CBD5E1;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    display: flex; justify-content: center; padding: 24px 12px; min-height: 100vh;
+  }
+  #phone {
+    width: 400px; max-width: 100%; background: var(--bg); border-radius: 22px; overflow: hidden;
+    border: 1px solid var(--line); box-shadow: 0 12px 40px rgba(27,63,114,0.18);
+    display: flex; flex-direction: column; min-height: 720px; position: relative;
+  }
+  .hidden { display: none !important; }
+
+  /* Topbar */
+  .topbar {
+    display: flex; align-items: center; gap: 10px; padding: 14px 16px;
+    background: var(--navy); flex-shrink: 0;
+  }
+  .topbar .back { color: white; font-size: 20px; cursor: pointer; line-height: 1; background: none; border: none; padding: 0; }
+  .topbar-title { flex: 1; min-width: 0; }
+  .topbar-title p.t { margin: 0; font-size: 16px; font-weight: 700; color: white; }
+  .topbar-title p.s { margin: 0; font-size: 11.5px; color: rgba(255,255,255,0.65); }
+  .topbar-brand { font-size: 20px; font-weight: 800; color: white; letter-spacing: -0.5px; }
+  .topbar-brand span { color: var(--teal); }
+
+  .screen { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+  .scroll { flex: 1; overflow-y: auto; }
+
+  /* Transiciones de pantalla estilo nativo */
+  #phone { perspective: 1000px; }
+  .slide-in  { animation: slideIn  0.22s cubic-bezier(.25,.46,.45,.94) both; }
+  .slide-out { animation: slideOut 0.18s cubic-bezier(.55,0,1,.45) both; }
+  @keyframes slideIn  { from { transform: translateX(100%); opacity:.6; } to { transform: translateX(0); opacity:1; } }
+  @keyframes slideOut { from { transform: translateX(0);    opacity:1; } to { transform: translateX(-30%); opacity:0; } }
+
+  /* Barra de búsqueda */
+  .searchbar {
+    display: flex; align-items: center; gap: 8px; background: var(--card);
+    border: 1px solid var(--line); border-radius: 10px; padding: 0 12px;
+    margin: 10px 14px 4px;
+  }
+  .searchbar input {
+    flex: 1; border: none; outline: none; background: transparent;
+    font-size: 13.5px; color: var(--ink); padding: 10px 0;
+  }
+  .searchbar input::placeholder { color: var(--ink-faint); }
+
+  /* Fila de chat (médico) */
+  .chat-row {
+    width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+    background: none; border: none; border-bottom: 1px solid var(--line);
+    cursor: pointer; text-align: left; transition: background 0.12s;
+  }
+  .chat-row:active { background: var(--navy-soft); }
+  .chat-row .meta { flex: 1; min-width: 0; }
+  .chat-row .meta p.n { margin: 0; font-size: 14.5px; font-weight: 600; color: var(--ink); }
+  .chat-row .meta p.esp { margin: 1px 0 0; font-size: 11.5px; color: var(--teal-deep); font-weight: 500; }
+  .chat-row .meta p.l { margin: 2px 0 0; font-size: 12.5px; color: var(--ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .chat-row .right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+  .chat-row .date { font-size: 11px; color: var(--ink-faint); }
+  .count-badge { background: var(--teal); color: white; font-size: 11px; font-weight: 700; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+  /* Avatar */
+  .avatar {
+    border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    font-weight: 700; color: white; font-size: 14px;
+  }
+
+  /* Tarjeta sticky datos críticos */
+  .critico-bar {
+    display: flex; gap: 0; background: var(--card); border-bottom: 1px solid var(--line); flex-shrink: 0;
+  }
+  .critico-item {
+    flex: 1; display: flex; align-items: center; gap: 6px; padding: 8px 12px;
+    border-right: 1px solid var(--line); font-size: 12px;
+  }
+  .critico-item:last-child { border-right: none; }
+  .critico-label { font-size: 10px; color: var(--ink-faint); display: block; line-height: 1; margin-bottom: 1px; }
+  .critico-val { font-weight: 700; color: var(--ink); font-size: 12px; }
+
+  /* Hilo de conversación */
+  .thread { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+  .msg-system {
+    align-self: center; font-size: 11px; color: var(--ink-faint);
+    background: rgba(255,255,255,0.8); padding: 3px 10px; border-radius: 999px;
+    border: 1px solid var(--line); margin: 4px 0;
+  }
+  /* Evento subido por el paciente (derecha) */
+  .msg-yo {
+    align-self: flex-end; max-width: 80%;
+    background: var(--teal-soft); border: 1px solid rgba(0,201,167,0.2);
+    border-radius: 12px 2px 12px 12px; padding: 10px 12px;
+  }
+  /* Nota del médico / resumen IA (izquierda) */
+  .msg-luisa {
+    align-self: flex-start; max-width: 82%;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 2px 12px 12px 12px; padding: 10px 12px;
+  }
+  .msg-tag { font-size: 10.5px; font-weight: 600; margin-bottom: 4px; }
+  .msg-tag.doc { color: var(--teal-deep); }
+  .msg-tag.nota { color: var(--navy); }
+  .msg-tag.med { color: #7C3AED; }
+  .msg-tag.cita { color: #B45309; }
+  .msg-body { font-size: 13.5px; color: var(--ink); line-height: 1.5; }
+  .msg-time { font-size: 10.5px; color: var(--ink-faint); margin-top: 5px; text-align: right; }
+  .chip-ia { display: inline-block; font-size: 10.5px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: var(--teal-soft); color: var(--teal-deep); margin-top: 5px; }
+  .med-card { background: var(--navy-soft); border-radius: 8px; padding: 8px 10px; margin-top: 6px; }
+  .med-card p { margin: 0; font-size: 12.5px; }
+  .med-card p.nm { font-weight: 700; color: var(--navy); }
+  .med-card p.dt { color: var(--ink-soft); margin-top: 2px; }
+
+  /* Composer */
+  .composer {
+    display: flex; align-items: center; gap: 8px; padding: 10px 12px;
+    border-top: 1px solid var(--line); background: var(--card); flex-shrink: 0;
+  }
+  .composer-btn {
+    width: 40px; height: 40px; border-radius: 50%; background: var(--teal);
+    border: none; color: white; font-size: 20px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0;
+  }
+  .composer input {
+    flex: 1; border: 1px solid var(--line); border-radius: 20px; padding: 9px 14px;
+    font-size: 13.5px; background: var(--bg); color: var(--ink); outline: none;
+  }
+
+  /* FAB */
+  .fab {
+    position: absolute; right: 20px; bottom: 72px; width: 50px; height: 50px; border-radius: 50%;
+    background: var(--teal); border: none; color: #fff; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; box-shadow: 0 4px 16px rgba(0,201,167,0.4); font-size: 22px; z-index: 10;
+  }
+
+  /* Modal bottom sheet */
+  .sheet-overlay {
+    position: absolute; inset: 0; background: rgba(15,31,61,0.5); z-index: 20;
+    display: flex; align-items: flex-end;
+  }
+  .sheet {
+    background: var(--card); width: 100%; border-radius: 20px 20px 0 0; padding: 20px 16px 28px;
+    animation: slideUp 0.28s ease-out;
+  }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .sheet-handle { width: 36px; height: 4px; background: var(--line); border-radius: 99px; margin: 0 auto 16px; }
+  .sheet-title { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 14px; text-align: center; }
+  .sheet-option {
+    width: 100%; display: flex; align-items: center; gap: 14px; padding: 14px 12px;
+    background: var(--bg); border-radius: 12px; border: none; cursor: pointer;
+    margin-bottom: 10px; text-align: left;
+  }
+  .sheet-option:active { background: var(--teal-soft); }
+  .sheet-option .ico { font-size: 26px; }
+  .sheet-option .lbl { font-size: 14px; font-weight: 600; color: var(--ink); }
+  .sheet-option .sub { font-size: 12px; color: var(--ink-soft); margin-top: 1px; }
+  .btn-cancel { width: 100%; padding: 12px; background: none; border: 1px solid var(--line); border-radius: 12px; font-size: 13.5px; color: var(--ink-soft); cursor: pointer; margin-top: 4px; }
+
+  /* Botón agregar médico */
+  .add-row {
+    width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+    background: none; border: none; border-bottom: 1px solid var(--line);
+    cursor: pointer; text-align: left; color: var(--ink-soft);
+  }
+  .add-circle { width: 48px; height: 48px; border-radius: 50%; border: 2px dashed var(--line); display: flex; align-items: center; justify-content: center; font-size: 22px; color: var(--ink-faint); flex-shrink: 0; }
+</style>
+</head>
+<body>
+<div id="phone"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ─── SUPABASE ─────────────────────────────────────────────
+const SUPA_URL  = 'https://isxspjlwuzbbtpamkknq.supabase.co';
+const SUPA_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlzeHNwamx3dXpiYnRwYW1ra25xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDYwMjMsImV4cCI6MjA5NTM4MjAyM30.D5iWO9K7137hFW_pBx9xYASHFfnyUcDthi9_A-6pksA';
+const db = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+
+// ─── DATOS DEMO REALISTAS ─────────────────────────────────
+const D = {
+  paciente: {
+    nombre: 'Roberto Aguilar Cota', edad: 58, sangre: 'O+',
+    alergias: 'Penicilina', meds: 4,
+    medicos_activos: 6, ultimo_evento: 'hace 2 días'
+  },
+  medicos: [
+    {
+      id: 'gonzalez', nombre: 'Dr. González Ruiz', esp: 'Cardiología',
+      ini: 'GR', color: '#DC2626',
+      ultimo: 'Presión 124/80 ✓  —  continúa Losartán 50 mg', fecha: '14 jul 2025',
+      visitas: [
+        { id:'s1', sistema: '5 octubre 2022' },
+        { id:'v1', lado:'yo', tag:'nota', tagLabel:'📝 Primera consulta',
+          cuerpo: 'Referido por Dr. Herrera. Presión 148/96 al llegar. Diagnóstico: hipertensión arterial estadio 1. Inició Enalapril 10 mg cada 12 hrs + dieta baja en sodio.',
+          hora: '9:10 AM', alerta: '⚠️ Sin antecedentes familiares cardíacos declarados' },
+        { id:'s2', sistema: '14 junio 2023' },
+        { id:'v2', lado:'yo', tag:'nota', tagLabel:'📝 Control semestral',
+          cuerpo: 'Tos seca persistente desde hace 3 meses. El médico atribuye el efecto al Enalapril. Cambió medicamento a Losartán 50 mg una vez al día.',
+          hora: '11:20 AM' },
+        { id:'v3', lado:'yo', tag:'doc', tagLabel:'📄 ECG + ecocardiograma',
+          cuerpo: 'Estudios solicitados por primera vez. Realizados en Laboratorios Médicos del Chopo.',
+          ia: 'ECG normal, ritmo sinusal 72 lpm. Ecocardiograma: fracción de eyección 62% (normal). Masa ventricular izquierda dentro de rango. Sin valvulopatías. Conclusión: corazón estructuralmente sano.',
+          hora: '12:05 PM' },
+        { id:'s3', sistema: '3 enero 2025' },
+        { id:'v4', lado:'yo', tag:'doc', tagLabel:'📄 Laboratorios — Perfil lipídico',
+          cuerpo: 'Resultados completos de química sanguínea y perfil lipídico.',
+          ia: 'Colesterol total 189 mg/dL ✓  |  LDL 118 mg/dL (meta <130 ✓)  |  HDL 48 mg/dL  |  Triglicéridos 162 mg/dL (límite alto)  |  Glucosa 98 mg/dL (normal)  |  Creatinina 0.9 mg/dL (función renal normal).\n\nRecomendación del médico: reducir consumo de carbohidratos refinados para bajar triglicéridos.',
+          meds: [{ nm: 'Losartán 50 mg', dt: '1 tableta cada mañana con o sin alimentos' }],
+          hora: '10:05 AM' },
+        { id:'s4', sistema: '14 julio 2025' },
+        { id:'v5', lado:'yo', tag:'doc', tagLabel:'📄 Control trimestral',
+          cuerpo: 'Toma de presión y revisión general.',
+          ia: 'Presión arterial 124/80 mmHg — excelente control. Peso 82 kg (-2 kg desde enero). Frecuencia cardíaca 68 lpm. Médico muy satisfecho con la evolución. Próxima cita en 6 meses (enero 2026).',
+          meds: [{ nm: 'Losartán 50 mg', dt: 'Continúa igual — no modificar' }],
+          hora: '9:45 AM' },
+        { id:'v6', lado:'yo', tag:'nota', tagLabel:'📝 Nota personal',
+          cuerpo: 'Me dijo que si los triglicéridos bajan de 150 en enero, ya no necesito control tan frecuente.',
+          hora: '9:58 AM' },
+      ]
+    },
+    {
+      id: 'carrillo', nombre: 'Dra. Carrillo Guajardo', esp: 'Dermatología',
+      ini: 'CG', color: '#7C3AED',
+      ultimo: '2ª revisión: progreso moderado — ajuste de dosis', fecha: '18 ago 2025',
+      visitas: [
+        { id:'s5', sistema: '8 mayo 2025' },
+        { id:'v7', lado:'yo', tag:'nota', tagLabel:'📝 Primera consulta',
+          cuerpo: 'Consulté por pérdida de cabello en zona de la coronilla y sienes. Diagnóstico: alopecia androgénica grado III (escala Norwood). Mencionó que no es alopecia areata como pensé.',
+          hora: '10:15 AM' },
+        { id:'v8', lado:'yo', tag:'doc', tagLabel:'📄 Receta — Mayo 2025',
+          cuerpo: 'Foto de receta de primera consulta.',
+          ia: 'Tratamiento para alopecia androgénica grado III:\n• Finasterida 1 mg — 1 tableta diaria indefinida\n• Minoxidil 5% solución (Folcare) — aplicar 1 mL en cuero cabelludo mañana y noche\n• Revita shampoo — uso diario\n\nNota médica: resultados visibles a partir de 4-6 meses. Foto de línea base tomada en consultorio.',
+          meds: [
+            { nm: 'Finasterida 1 mg', dt: '1 tableta diaria — tomar a la misma hora' },
+            { nm: 'Minoxidil 5% Folcare', dt: '1 mL mañana y noche en cuero cabelludo seco' },
+          ],
+          hora: '10:48 AM', alerta: '⚠️ Finasterida: no tocar si hay embarazo en el hogar' },
+        { id:'v9', lado:'yo', tag:'nota', tagLabel:'📝 Nota',
+          cuerpo: 'Me explicó que la Finasterida puede causar disfunción eréctil en 2-3% de los casos. Le pregunté si podía dejar de tomarla si pasa y dijo que sí, es reversible.',
+          hora: '11:02 AM' },
+        { id:'s6', sistema: '18 agosto 2025' },
+        { id:'v10', lado:'yo', tag:'doc', tagLabel:'📄 Fotos comparativas 3 meses',
+          cuerpo: 'Llevé fotos del antes (tomadas en mayo) para comparar.',
+          ia: 'Revisión a 3 meses: progreso moderado. Reducción del 30% en caída diaria según el conteo. Densidad en zona de coronilla mejoró levemente. La dermatóloga calificó el resultado como "esperado para este tiempo".\n\nAjuste: subir Minoxidil a aplicación 3 veces/día si tolera bien.',
+          meds: [
+            { nm: 'Finasterida 1 mg', dt: 'Continúa igual' },
+            { nm: 'Minoxidil 5% Folcare', dt: 'Subir a 3 aplicaciones/día — mañana, tarde y noche' },
+          ],
+          hora: '4:20 PM' },
+        { id:'v11', lado:'yo', tag:'nota', tagLabel:'📝 Nota',
+          cuerpo: 'Próxima cita en 3 meses (noviembre 2025). Si a los 6 meses no hay mejoría considerable, evaluaremos PRP (plasma rico en plaquetas).',
+          hora: '4:35 PM' },
+      ]
+    },
+    {
+      id: 'herrera', nombre: 'Dr. Herrera Campos', esp: 'Médico general',
+      ini: 'HC', color: '#059669',
+      ultimo: 'Chequeo anual completo — todo en orden', fecha: '12 feb 2025',
+      visitas: [
+        { id:'s7', sistema: '15 enero 2022' },
+        { id:'v12', lado:'yo', tag:'nota', tagLabel:'📝 Médico de cabecera desde 2022',
+          cuerpo: 'Primera consulta. Chequeo general por cambio de médico (me lo recomendó mi cuñado). Peso 86 kg, talla 1.74 m, IMC 28.4 (sobrepeso leve). Presión 146/94 — me refirió con cardiólogo.',
+          hora: '10:30 AM' },
+        { id:'s8', sistema: '10 marzo 2023' },
+        { id:'v13', lado:'yo', tag:'doc', tagLabel:'📄 Biometría hemática + química',
+          cuerpo: 'Exámenes de sangre de rutina anuales.',
+          ia: 'Hemoglobina 15.2 g/dL ✓  |  Leucocitos 6,800/μL (normal)  |  Plaquetas 210,000 ✓\nGlucosa 102 mg/dL (prediabetes borderline — vigilar)  |  Ácido úrico 6.8 mg/dL (límite normal)\nHemoglobina glucosilada A1c: 5.6% (normal, <5.7%)\n\nRecomendación: reducir azúcares simples, mantener actividad física.',
+          hora: '9:15 AM', alerta: '⚠️ Glucosa en límite — monitorear anualmente' },
+        { id:'s9', sistema: '12 febrero 2025' },
+        { id:'v14', lado:'yo', tag:'doc', tagLabel:'📄 Chequeo anual 2025',
+          cuerpo: 'Revisión completa + actualización de vacunas.',
+          ia: 'Peso 84 kg (-2 kg) ✓  |  Presión 126/82 ✓  |  Glucosa 96 mg/dL ✓  |  IMC 27.8\nVacunas al día: influenza reciente, tétanos vigente hasta 2028, pendiente hepatitis B (3ra dosis).\n\nEstado general: excelente para 58 años. El Dr. Herrera comentó que los indicadores mejoraron respecto al año anterior.',
+          hora: '10:50 AM' },
+        { id:'v15', lado:'yo', tag:'nota', tagLabel:'📝 Nota',
+          cuerpo: 'Me recordó que debo hacerme colonoscopía de rutina antes de los 60. Lo tengo pendiente para este año.',
+          hora: '11:05 AM' },
+      ]
+    },
+    {
+      id: 'rios', nombre: 'Dra. Ríos Hernández', esp: 'Dermatología Oncológica',
+      ini: 'RH', color: '#DB2777',
+      ultimo: 'Sin lesiones sospechosas — próxima revisión abril 2025', fecha: '10 abr 2024',
+      visitas: [
+        { id:'s10', sistema: '8 septiembre 2023' },
+        { id:'v16', lado:'yo', tag:'nota', tagLabel:'📝 Primera revisión de lunares',
+          cuerpo: 'Me refirió el Dr. Herrera por antecedente familiar: abuelo paterno tuvo melanoma a los 72 años. La dermatóloga hizo mapeo corporal completo con dermoscopio.',
+          hora: '3:00 PM' },
+        { id:'v17', lado:'yo', tag:'doc', tagLabel:'📄 Reporte dermoscopía 2023',
+          cuerpo: 'Informe de revisión de 18 lunares mapeados.',
+          ia: '18 lesiones nevoides evaluadas. Criterios ABCDE aplicados a cada una.\n• 15 lunares: benignos, sin cambios requeridos\n• 2 lunares: vigilancia anual (zona lumbar derecha y antebrazo izquierdo)\n• 1 lunar: extirpación preventiva recomendada (hombro derecho, 7mm, bordes irregulares)\n\nProcedimiento: extirpación programada para la siguiente semana. Resultado histológico: nevus displásico de bajo grado — márgenes libres.',
+          hora: '3:45 PM', alerta: '⚠️ Revisión anual obligatoria — no omitir' },
+        { id:'s11', sistema: '10 abril 2024' },
+        { id:'v18', lado:'yo', tag:'doc', tagLabel:'📄 Control anual 2024',
+          cuerpo: 'Segunda revisión — seguimiento de los 2 lunares en vigilancia.',
+          ia: '17 lunares revisados (1 extirpado en 2023). Sin cambios en los 2 lunares en vigilancia. Cicatriz de extirpación: correctamente cerrada, sin signos de recidiva.\n\nNueva detección: 3 lunares nuevos en zona lumbar por exposición solar — añadidos al mapa. Recomendación: protector solar SPF 50+ diario en cara y cuello.',
+          hora: '4:10 PM' },
+        { id:'v19', lado:'yo', tag:'nota', tagLabel:'📝 Nota',
+          cuerpo: 'Me encargó no exponerme al sol entre 11am y 3pm. También me dijo que el tipo de piel que tengo (Fitzpatrick III) tiene riesgo moderado.',
+          hora: '4:25 PM' },
+      ]
+    },
+    {
+      id: 'reyes', nombre: 'Dra. Reyes Montoya', esp: 'Oftalmología',
+      ini: 'RM', color: '#0369A1',
+      ultimo: 'Presbicia + astigmatismo leve — nueva graduación', fecha: '5 mar 2025',
+      visitas: [
+        { id:'s12', sistema: '20 noviembre 2023' },
+        { id:'v20', lado:'yo', tag:'nota', tagLabel:'📝 Primera consulta',
+          cuerpo: 'Consulta por dificultad para leer de cerca. Diagnóstico: presbicia (+1.75) más astigmatismo leve en ojo derecho (-0.50 a 80°). Me recetó lentes progresivos.',
+          hora: '11:00 AM' },
+        { id:'v21', lado:'yo', tag:'doc', tagLabel:'📄 Receta de lentes 2023',
+          cuerpo: 'Prescripción para lentes oftálmicos.',
+          ia: 'OD: esfera +1.75, cilindro -0.50, eje 80°\nOI: esfera +1.50, cilindro plano\nAdición para cerca: +2.00\nTipo de lente: progresivos antirreflejantes\nLaboratorio sugerido: Óptica Devlyn o similar',
+          hora: '11:30 AM' },
+        { id:'s13', sistema: '5 marzo 2025' },
+        { id:'v22', lado:'yo', tag:'doc', tagLabel:'📄 Control + nueva graduación',
+          cuerpo: 'Revisión anual. Notaba que me costaba más ver de lejos también.',
+          ia: 'Agudeza visual sin corrección: 20/50 OD, 20/40 OI.\nNueva prescripción:\nOD: esfera +2.00, cilindro -0.75, eje 82°\nOI: esfera +1.75, cilindro -0.25, eje 95°\nAdición: +2.25\n\nPresión intraocular: 14 mmHg OD / 13 mmHg OI (normal, sin riesgo de glaucoma).\nFondo de ojo: sin alteraciones. Próxima revisión en 1 año.',
+          hora: '10:20 AM' },
+      ]
+    },
+    {
+      id: 'soto', nombre: 'Dr. Soto Villanueva', esp: 'Ortopedia',
+      ini: 'SV', color: '#B45309',
+      ultimo: 'Tendinitis rotuliana — fisioterapia completada', fecha: '22 jun 2024',
+      visitas: [
+        { id:'s14', sistema: '3 abril 2024' },
+        { id:'v23', lado:'yo', tag:'nota', tagLabel:'📝 Urgencia — rodilla derecha',
+          cuerpo: 'Fui de urgencia por dolor agudo en rodilla derecha después de partido de pádel. Inflamación visible. Diagnóstico inicial: probable lesión meniscal vs. tendinitis. Ordenó rayos X y resonancia.',
+          hora: '6:30 PM' },
+        { id:'v24', lado:'yo', tag:'doc', tagLabel:'📄 Rayos X + RMN rodilla',
+          cuerpo: 'Estudios realizados en Hospital Ángeles.',
+          ia: 'Rayos X: sin fracturas ni lesiones óseas visibles. Espacio articular conservado.\nRMN: tendinitis del tendón rotuliano grado II. Sin lesión meniscal. Sin daño ligamentario.\n\nPlan de tratamiento:\n• Reposo deportivo 4 semanas\n• Diclofenaco 100 mg SR una vez al día (10 días)\n• Fisioterapia 3x/semana × 6 semanas\n• Hielo local 20 min 3x/día primera semana',
+          meds: [{ nm: 'Diclofenaco 100 mg SR', dt: '1 tableta diaria con alimentos — solo 10 días' }],
+          hora: '8:15 PM' },
+        { id:'s15', sistema: '22 junio 2024' },
+        { id:'v25', lado:'yo', tag:'nota', tagLabel:'📝 Alta médica',
+          cuerpo: 'Completé 6 semanas de fisio (18 sesiones en Physio+ Polanco). Rodilla al 95%. El doctor dijo que puedo volver al pádel pero usar rodillera las primeras 4 semanas y evitar partidos de más de 90 min.',
+          hora: '10:40 AM' },
+      ]
+    },
+  ]
+};
+
+// ─── ESTADO ───────────────────────────────────────────────
+let medicoActual = null;
+
+// ─── RENDER HELPER ────────────────────────────────────────
+const phone = document.getElementById('phone');
+let _pantallaActual = 'lista';
+function render(html, animacion = 'none') {
+  const c = document.createElement('div');
+  c.style.cssText = 'display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden';
+  c.innerHTML = html;
+  if (animacion === 'adelante') c.classList.add('slide-in');
+  phone.innerHTML = '';
+  phone.appendChild(c);
+}
+
+// ─── TIMESTAMPS RELATIVOS ESTILO WHATSAPP ─────────────────
+function tsRelativo(fechaStr) {
+  if (!fechaStr) return '';
+  const ahora = new Date();
+  const fecha = new Date(fechaStr);
+  const diffMs = ahora - fecha;
+  const diffDias = Math.floor(diffMs / 86400000);
+  if (diffDias === 0) return 'Hoy';
+  if (diffDias === 1) return 'Ayer';
+  if (diffDias < 7)  return fecha.toLocaleDateString('es-MX', {weekday:'short'});
+  if (diffDias < 365) return fecha.toLocaleDateString('es-MX', {day:'numeric', month:'short'});
+  return fecha.toLocaleDateString('es-MX', {day:'numeric', month:'short', year:'numeric'});
+}
+
+function tsHora(fechaStr) {
+  if (!fechaStr) return '';
+  return new Date(fechaStr).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit'});
+}
+
+// Convierte "10 feb 2025" o ISO a Date para comparar
+function parseFecha(str) {
+  if (!str) return new Date(0);
+  if (str.includes('-') && str.length >= 8) return new Date(str);
+  // Formato "10 feb 2025" → parsear manualmente
+  const meses = {ene:0,feb:1,mar:2,abr:3,may:4,jun:5,jul:6,ago:7,sep:8,oct:9,nov:10,dic:11};
+  const p = str.trim().toLowerCase().split(' ');
+  if (p.length === 3) return new Date(+p[2], meses[p[1]] ?? 0, +p[0]);
+  return new Date(0);
+}
+
+// ─── PANTALLA 1: LISTA DE MÉDICOS ─────────────────────────
+function pantallaLista(filtro = '') {
+  // Ordenar por fecha más reciente primero
+  const medicos = [...D.medicos].sort((a, b) =>
+    parseFecha(b.fecha) - parseFecha(a.fecha)
+  );
+  const visible = filtro
+    ? medicos.filter(m =>
+        m.nombre.toLowerCase().includes(filtro.toLowerCase()) ||
+        m.esp.toLowerCase().includes(filtro.toLowerCase()))
+    : medicos;
+
+  const rows = visible.map(m => {
+    const nEvs = m.visitas.filter(v => !v.sistema).length;
+    const ts = tsRelativo(parseFecha(m.fecha).toISOString());
+    return `
+    <button class="chat-row" onclick="pantallaChat('${m.id}')">
+      <div class="avatar" style="width:48px;height:48px;background:${m.color};font-size:15px">${m.ini}</div>
+      <div class="meta">
+        <p class="n">${m.nombre}</p>
+        <p class="esp">${m.esp}</p>
+        <p class="l">${m.ultimo}</p>
+      </div>
+      <div class="right">
+        <span class="date">${ts}</span>
+        ${nEvs > 0 ? `<span class="count-badge">${nEvs}</span>` : ''}
+      </div>
+    </button>`;
+  }).join('');
+
+  const vacio = visible.length === 0 ? `
+    <div style="padding:40px 24px;text-align:center;color:var(--ink-faint)">
+      <div style="font-size:36px;margin-bottom:10px">🔍</div>
+      <div style="font-size:14px">Sin resultados para "<strong>${filtro}</strong>"</div>
+    </div>` : '';
+
+  render(`
+    <div class="topbar">
+      <div class="topbar-brand">Luisa<span>.</span></div>
+      <div class="topbar-title" style="text-align:right">
+        <p class="t" style="color:white;font-size:13px">${D.paciente.nombre}</p>
+        <p class="s">${D.medicos.length} médicos · ${D.medicos.reduce((s,m)=>s+m.visitas.filter(v=>!v.sistema).length,0)} eventos</p>
+      </div>
+      ${usuarioActual ? `<button onclick="cerrarSesion()" style="background:none;border:none;color:rgba(255,255,255,0.55);font-size:18px;cursor:pointer;padding:0 0 0 8px" title="Cerrar sesión">⏻</button>` : ''}
+    </div>
+    <div class="screen">
+      <div class="searchbar">
+        <span style="color:var(--ink-faint)">🔍</span>
+        <input placeholder="Buscar médico o especialidad..." oninput="pantallaLista(this.value)" value="${filtro}" autocomplete="off" />
+      </div>
+      <div class="critico-bar">
+        <div class="critico-item">
+          <span>🩸</span>
+          <div><span class="critico-label">Sangre</span><span class="critico-val">${D.paciente.sangre}</span></div>
+        </div>
+        <div class="critico-item">
+          <span>⚠️</span>
+          <div><span class="critico-label">Alergia</span><span class="critico-val">${D.paciente.alergias}</span></div>
+        </div>
+        <div class="critico-item">
+          <span>💊</span>
+          <div><span class="critico-label">Meds</span><span class="critico-val">${D.paciente.meds} activos</span></div>
+        </div>
+      </div>
+      <div class="scroll">
+        ${rows}${vacio}
+        <button class="add-row" onclick="agregarMedico()">
+          <div class="add-circle">+</div>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--teal-deep)">Agregar médico</div>
+            <div style="font-size:12px;color:var(--ink-faint)">Nueva carpeta de consultas</div>
+          </div>
+        </button>
+      </div>
+    </div>
+  `);
+}
+
+// ─── PANTALLA 2: CONVERSACIÓN CON MÉDICO ──────────────────
+function pantallaChat(medicoId) {
+  medicoActual = D.medicos.find(m => m.id === medicoId);
+  if (!medicoActual) return;
+
+  const nEvs = medicoActual.visitas.filter(v => !v.sistema).length;
+  const subtitulo = nEvs === 0
+    ? 'Sin consultas — toca 📷 para empezar'
+    : `${medicoActual.esp} · ${nEvs} evento${nEvs !== 1 ? 's' : ''}`;
+
+  const mensajes = medicoActual.visitas.map(v => {
+    if (v.sistema) return `<div class="msg-system">${v.sistema}</div>`;
+
+    let iaHTML = '';
+    if (v.ia) {
+      const lineas = v.ia.split('\n').map(l => l.trim()).filter(Boolean);
+      const iaTexto = lineas.map(l => `<div style="margin-bottom:2px">${l}</div>`).join('');
+      iaHTML = `<div style="margin-top:8px;padding:8px 10px;background:rgba(0,201,167,0.08);border-left:3px solid var(--teal);border-radius:0 6px 6px 0;font-size:12.5px;color:#007A66;line-height:1.5">✦ ${iaTexto}</div>`;
+    }
+    let medsHTML = '';
+    if (v.meds) {
+      medsHTML = v.meds.map(md => `
+        <div class="med-card">
+          <p class="nm">💊 ${md.nm}</p>
+          <p class="dt">${md.dt}</p>
+        </div>`).join('');
+    }
+    let alertaHTML = '';
+    if (v.alerta) {
+      alertaHTML = `<div style="margin-top:6px;font-size:11.5px;color:#B45309;background:#FEF3C7;border-radius:6px;padding:5px 8px">${v.alerta}</div>`;
+    }
+    // ✓✓ para los que ya están en DB (los demo siempre lo tienen, los nuevos después del save)
+    const guardado = v.guardado !== false
+      ? `<span style="color:var(--teal);font-size:11px;margin-left:4px">✓✓</span>` : '';
+
+    const claseMsg = v.lado === 'yo' ? 'msg-yo' : 'msg-luisa';
+    return `
+      <div class="${claseMsg}">
+        <div class="msg-tag ${v.tag}">${v.tagLabel}</div>
+        <div class="msg-body">${v.cuerpo}</div>
+        ${iaHTML}
+        ${medsHTML}
+        ${alertaHTML}
+        ${v.ia ? '<span class="chip-ia">✓ Organizado por Luisa</span>' : ''}
+        <div class="msg-time">${v.hora}${guardado}</div>
+      </div>`;
+  }).join('');
+
+  const vacioCTA = nEvs === 0 ? `
+    <div style="padding:32px 20px;text-align:center">
+      <div style="font-size:44px;margin-bottom:12px">📋</div>
+      <p style="margin:0 0 6px;font-size:15px;font-weight:700;color:var(--ink)">Primera consulta con ${medicoActual.nombre.split(' ')[1] || medicoActual.nombre}</p>
+      <p style="margin:0;font-size:13px;color:var(--ink-soft);line-height:1.6">Toca 📷 abajo para fotografiar<br>la receta o documento que te dio.</p>
+    </div>` : '';
+
+  render(`
+    <div class="topbar">
+      <button class="back" onclick="pantallaLista()" style="font-size:22px">‹</button>
+      <div class="avatar" style="width:40px;height:40px;background:${medicoActual.color};font-size:14px;flex-shrink:0">${medicoActual.ini}</div>
+      <div class="topbar-title">
+        <p class="t">${medicoActual.nombre}</p>
+        <p class="s">${subtitulo}</p>
+      </div>
+      <button onclick="abrirSheet()" style="background:none;border:none;color:rgba(255,255,255,0.7);font-size:22px;cursor:pointer;padding:0">⋮</button>
+    </div>
+    <div class="screen">
+      <div class="scroll" id="thread-scroll">
+        <div class="thread">${vacioCTA}${mensajes}</div>
+      </div>
+      <div class="composer">
+        <label class="composer-btn" for="input-foto" style="cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px">📷</label>
+        <input placeholder="Nota rápida..." id="input-nota-rapida"
+          onkeydown="if(event.key==='Enter'&&this.value.trim())enviarNotaRapida()"
+          style="flex:1;border:1px solid var(--line);border-radius:22px;padding:10px 16px;font-size:14px;background:var(--bg);color:var(--ink);outline:none" />
+        <button onclick="nuevaConsultaHoy()"
+          style="background:none;border:1px solid var(--line);border-radius:20px;padding:7px 12px;font-size:12px;font-weight:600;color:var(--navy);cursor:pointer;white-space:nowrap">
+          + Consulta
+        </button>
+      </div>
+    </div>
+    <div id="sheet-overlay" class="sheet-overlay hidden" onclick="cerrarSheet(event)">
+      <div class="sheet" onclick="event.stopPropagation()">
+        <div class="sheet-handle"></div>
+        <div class="sheet-title">Agregar a ${medicoActual.nombre.split(' ')[0]} ${medicoActual.nombre.split(' ')[1] || ''}</div>
+        <button class="sheet-option" onclick="agregarFoto()">
+          <span class="ico">📷</span>
+          <div><div class="lbl">Foto de documento</div><div class="sub">Receta, análisis, estudio, indicación...</div></div>
+        </button>
+        <button class="sheet-option" onclick="agregarNota()">
+          <span class="ico">📝</span>
+          <div><div class="lbl">Nota de la consulta</div><div class="sub">Lo que pasó, síntomas, indicaciones verbales</div></div>
+        </button>
+        <button class="sheet-option" onclick="nuevaConsultaHoy();cerrarSheet()">
+          <span class="ico">📅</span>
+          <div><div class="lbl">Nueva consulta hoy</div><div class="sub">Inserta separador con la fecha de hoy</div></div>
+        </button>
+        <button class="btn-cancel" onclick="cerrarSheet()">Cancelar</button>
+      </div>
+    </div>
+    <input type="file" id="input-foto" accept="image/*" capture="environment" style="display:none" onchange="procesarFoto(event)"/>
+  `);
+
+  // Scroll al fondo
+  setTimeout(() => {
+    const el = document.getElementById('thread-scroll');
+    if (el) el.scrollTop = el.scrollHeight;
+  }, 60);
+}
+
+function abrirSheet() {
+  const el = document.getElementById('sheet-overlay');
+  if (el) el.classList.remove('hidden');
+}
+function cerrarSheet(e) {
+  if (!e || e.target === document.getElementById('sheet-overlay')) {
+    const el = document.getElementById('sheet-overlay');
+    if (el) el.classList.add('hidden');
+  }
+}
+
+function agregarFoto() {
+  cerrarSheet();
+  const inp = document.getElementById('input-foto');
+  if (inp) inp.click();
+}
+
+async function procesarFoto(event) {
+  const file = event.target.files[0];
+  if (!file || !medicoActual) return;
+  event.target.value = '';
+
+  const hora = new Date().toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit'});
+  const nueva = {
+    id: 'v' + Date.now(), lado: 'yo', tag: 'doc', tagLabel: '📄 Documento subido',
+    cuerpo: 'Luisa está leyendo tu documento...', hora
+  };
+  medicoActual.visitas.push(nueva);
+  pantallaChat(medicoActual.id);
+
+  try {
+    let fotoUrl;
+    if (usuarioActual) {
+      fotoUrl = await subirFotoReal(file, usuarioActual.id);
+    } else {
+      fotoUrl = URL.createObjectURL(file);
+    }
+
+    const ia = await llamarIA(fotoUrl);
+    nueva.cuerpo = ia?.titulo || 'Documento guardado.';
+    nueva.ia = ia?.resumen || ia?.diagnostico || 'Analizado por Luisa.';
+
+    if (usuarioActual) {
+      await db.from('eventos_salud').insert({
+        perfil_id: usuarioActual.id,
+        medico_nombre: medicoActual.nombre,
+        especialidad_medico: medicoActual.esp,
+        titulo: nueva.cuerpo,
+        resumen_ia: nueva.ia,
+        foto_url: fotoUrl,
+        tipo_documento: ia?.tipo_documento || 'documento'
+      });
+    }
+  } catch(e) {
+    nueva.cuerpo = 'Error al procesar. Intenta de nuevo.';
+    nueva.ia = null;
+  }
+
+  pantallaChat(medicoActual.id);
+}
+
+function agregarNota() {
+  cerrarSheet();
+  const texto = prompt('¿Qué quieres anotar sobre esta consulta?');
+  if (!texto || !medicoActual) return;
+  _pushNota(texto);
+}
+
+function enviarNotaRapida() {
+  const inp = document.getElementById('input-nota-rapida');
+  if (!inp || !inp.value.trim() || !medicoActual) return;
+  _pushNota(inp.value.trim());
+  inp.value = '';
+}
+
+async function _pushNota(texto) {
+  const hora = new Date().toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit'});
+  const nueva = {
+    id: 'v' + Date.now(), lado: 'yo', tag: 'nota', tagLabel: '📝 Nota',
+    cuerpo: texto, hora, guardado: false
+  };
+  medicoActual.visitas.push(nueva);
+  pantallaChat(medicoActual.id);
+
+  if (usuarioActual) {
+    const { error } = await db.from('eventos_salud').insert({
+      perfil_id: usuarioActual.id,
+      medico_nombre: medicoActual.nombre,
+      especialidad_medico: medicoActual.esp,
+      titulo: 'Nota',
+      descripcion: texto,
+      tipo_documento: 'nota'
+    });
+    if (!error) {
+      nueva.guardado = true;
+      // Actualiza solo el timestamp en el DOM sin re-render completo
+      pantallaChat(medicoActual.id);
+    }
+  } else {
+    nueva.guardado = true;
+  }
+}
+
+function nuevaConsultaHoy() {
+  const hoy = new Date().toLocaleDateString('es-MX', {day:'numeric', month:'long', year:'numeric'});
+  medicoActual.visitas.push({ id: 'sys_' + Date.now(), sistema: hoy + ' — Nueva consulta' });
+  pantallaChat(medicoActual.id);
+}
+
+// ─── AGREGAR MÉDICO ───────────────────────────────────────
+function agregarMedico() {
+  render(`
+    <div class="topbar">
+      <button class="back" onclick="pantallaLista()">←</button>
+      <div class="topbar-title"><p class="t">Nuevo médico</p><p class="s">Agrega una carpeta de consultas</p></div>
+    </div>
+    <div class="screen" style="padding:24px 20px;gap:14px">
+      <p style="margin:0;font-size:13px;color:var(--ink-soft)">¿Con qué médico tuviste consulta?</p>
+      <input id="nm-nombre" placeholder="Nombre del médico" autocomplete="off"
+        style="width:100%;border:1px solid var(--line);border-radius:12px;padding:13px 16px;font-size:15px;background:var(--bg);color:var(--ink);outline:none"/>
+      <select id="nm-esp"
+        style="width:100%;border:1px solid var(--line);border-radius:12px;padding:13px 16px;font-size:14px;background:var(--bg);color:var(--ink);outline:none">
+        <option value="">Especialidad...</option>
+        <option>Médico general</option><option>Cardiología</option><option>Dermatología</option>
+        <option>Dermatología Oncológica</option><option>Ginecología</option><option>Neurología</option>
+        <option>Oftalmología</option><option>Ortopedia</option><option>Psiquiatría</option>
+        <option>Endocrinología</option><option>Gastroenterología</option><option>Urología</option>
+        <option>Traumatología</option><option>Otra especialidad</option>
+      </select>
+      <button onclick="confirmarMedico()"
+        style="width:100%;background:var(--navy);color:white;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px">
+        Crear carpeta
+      </button>
+    </div>
+  `);
+}
+
+function confirmarMedico() {
+  const nombre = document.getElementById('nm-nombre')?.value?.trim();
+  const esp = document.getElementById('nm-esp')?.value;
+  if (!nombre) { alert('Escribe el nombre del médico'); return; }
+  const nuevo = {
+    id: 'med_' + Date.now(),
+    nombre, esp: esp || 'Médico',
+    ini: inicialesNombre(nombre),
+    color: colorEsp(esp),
+    ultimo: 'Sin consultas todavía',
+    fecha: new Date().toLocaleDateString('es-MX', {day:'numeric',month:'short',year:'numeric'}),
+    visitas: [{
+      id: 'sys_' + Date.now(),
+      sistema: new Date().toLocaleDateString('es-MX', {day:'numeric',month:'long',year:'numeric'}) + ' — Primera consulta registrada'
+    }]
+  };
+  D.medicos.unshift(nuevo);
+  pantallaChat(nuevo.id);
+}
+
+// ─── COLORES POR ESPECIALIDAD ─────────────────────────────
+const COLORES_ESP = {
+  'Dermatología': '#7C3AED', 'Cardiología': '#DC2626', 'Ginecología': '#DB2777',
+  'Neurología': '#1D4ED8', 'Ortopedia': '#B45309', 'Oftalmología': '#0369A1',
+  'default': '#059669'
+};
+function colorEsp(esp) {
+  return COLORES_ESP[esp] || COLORES_ESP.default;
+}
+function inicialesNombre(nombre) {
+  return nombre.split(' ').slice(0,2).map(p=>p[0]).join('').toUpperCase();
+}
+
+// ─── AUTH ─────────────────────────────────────────────────
+let usuarioActual = null;
+
+function pantallaLogin() {
+  render(`
+    <div class="topbar" style="justify-content:center;padding:24px 16px">
+      <div class="topbar-brand" style="font-size:26px">Luisa<span>.</span></div>
+    </div>
+    <div class="screen" style="align-items:center;justify-content:center;padding:32px 24px;gap:16px">
+      <div style="font-size:48px;margin-bottom:8px">🗂️</div>
+      <p style="margin:0;font-size:18px;font-weight:700;color:var(--ink);text-align:center">Tu expediente médico</p>
+      <p style="margin:0;font-size:14px;color:var(--ink-soft);text-align:center;line-height:1.6">
+        Organizado por médico, con IA que lee tus documentos.
+      </p>
+      <div style="width:100%;margin-top:16px">
+        <input id="inp-email" type="email" placeholder="tu@correo.com" autocomplete="email"
+          style="width:100%;border:1px solid var(--line);border-radius:12px;padding:13px 16px;font-size:15px;background:var(--bg);color:var(--ink);outline:none;margin-bottom:10px"/>
+        <button onclick="enviarMagicLink()"
+          style="width:100%;background:var(--navy);color:white;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer">
+          Entrar con enlace mágico
+        </button>
+      </div>
+      <button onclick="usarDemo()"
+        style="background:none;border:none;color:var(--teal-deep);font-size:13px;cursor:pointer;text-decoration:underline;margin-top:4px">
+        Ver demo sin cuenta
+      </button>
+    </div>
+  `);
+}
+
+function pantallaEsperandoLink(email) {
+  render(`
+    <div class="topbar" style="justify-content:center;padding:24px 16px">
+      <div class="topbar-brand" style="font-size:26px">Luisa<span>.</span></div>
+    </div>
+    <div class="screen" style="align-items:center;justify-content:center;padding:32px 24px;gap:16px">
+      <div style="font-size:52px">📬</div>
+      <p style="margin:0;font-size:17px;font-weight:700;color:var(--ink);text-align:center">Revisa tu correo</p>
+      <p style="margin:0;font-size:14px;color:var(--ink-soft);text-align:center;line-height:1.6">
+        Enviamos un enlace a <strong>${email}</strong>.<br>Tócalo para entrar.
+      </p>
+      <button onclick="pantallaLogin()"
+        style="margin-top:16px;background:none;border:1px solid var(--line);border-radius:12px;padding:11px 24px;font-size:13.5px;color:var(--ink-soft);cursor:pointer">
+        Usar otro correo
+      </button>
+    </div>
+  `);
+}
+
+async function enviarMagicLink() {
+  const email = document.getElementById('inp-email')?.value?.trim();
+  if (!email) return;
+  const btn = document.querySelector('button[onclick="enviarMagicLink()"]');
+  if (btn) { btn.disabled = true; btn.textContent = 'Enviando...'; }
+  const { error } = await db.auth.signInWithOtp({
+    email,
+    options: { emailRedirectTo: window.location.href }
+  });
+  if (error) {
+    alert('Error: ' + error.message);
+    if (btn) { btn.disabled = false; btn.textContent = 'Entrar con enlace mágico'; }
+  } else {
+    pantallaEsperandoLink(email);
+  }
+}
+
+function usarDemo() {
+  usuarioActual = null;
+  pantallaLista();
+}
+
+async function cerrarSesion() {
+  await db.auth.signOut();
+  usuarioActual = null;
+  pantallaLogin();
+}
+
+// ─── CARGA DE DATOS REALES ────────────────────────────────
+async function cargarMedicos(userId) {
+  const { data, error } = await db
+    .from('eventos_salud')
+    .select('medico_nombre, especialidad_medico, created_at, titulo, resumen_ia')
+    .eq('perfil_id', userId)
+    .order('created_at', { ascending: false });
+
+  if (error || !data || data.length === 0) return null;
+
+  const byDoc = {};
+  data.forEach(e => {
+    const key = e.medico_nombre || 'Sin médico';
+    if (!byDoc[key]) {
+      byDoc[key] = {
+        id: key,
+        nombre: key,
+        esp: e.especialidad_medico || 'Médico',
+        ini: inicialesNombre(key),
+        color: colorEsp(e.especialidad_medico),
+        ultimo: e.titulo || e.resumen_ia || '—',
+        fecha: new Date(e.created_at).toLocaleDateString('es-MX', {day:'numeric',month:'short',year:'numeric'}),
+        visitas: []
+      };
+    }
+  });
+
+  for (const key of Object.keys(byDoc)) {
+    const { data: eventos } = await db
+      .from('eventos_salud')
+      .select('*')
+      .eq('perfil_id', userId)
+      .eq('medico_nombre', key)
+      .order('created_at', { ascending: true });
+
+    if (eventos) {
+      byDoc[key].visitas = eventos.map(e => ({
+        id: e.id,
+        lado: 'yo',
+        tag: e.foto_url ? 'doc' : 'nota',
+        tagLabel: e.foto_url ? '📄 ' + (e.titulo || 'Documento') : '📝 Nota',
+        cuerpo: e.descripcion || e.titulo || '—',
+        ia: e.resumen_ia || null,
+        hora: new Date(e.created_at).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit'}),
+        foto_url: e.foto_url || null
+      }));
+    }
+  }
+
+  return Object.values(byDoc);
+}
+
+async function cargarPerfil(userId) {
+  const { data } = await db.from('perfiles_luisa').select('*').eq('id', userId).single();
+  return data;
+}
+
+// ─── SUBIDA DE FOTO REAL ──────────────────────────────────
+async function subirFotoReal(file, userId) {
+  const ext = file.name.split('.').pop();
+  const path = `${userId}/${Date.now()}.${ext}`;
+  const { error: upErr } = await db.storage.from('luisa-fotos').upload(path, file);
+  if (upErr) throw upErr;
+  const { data: { publicUrl } } = db.storage.from('luisa-fotos').getPublicUrl(path);
+  return publicUrl;
+}
+
+async function llamarIA(fotoUrl) {
+  const res = await fetch('/.netlify/functions/procesar-documento', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ foto_url: fotoUrl })
+  });
+  if (!res.ok) return null;
+  return res.json();
+}
+
+// ─── SEED DE DATOS DEMO A SUPABASE ───────────────────────
+async function seedDemoSiEstaVacio(userId) {
+  // Solo hace seed si el usuario no tiene eventos todavía
+  const { count } = await db
+    .from('eventos_salud')
+    .select('id', { count: 'exact', head: true })
+    .eq('perfil_id', userId);
+
+  if (count > 0) return; // Ya tiene datos, no sobreescribir
+
+  const filas = [];
+  for (const med of D.medicos) {
+    for (const v of med.visitas) {
+      if (v.sistema) continue; // separadores no se guardan
+      filas.push({
+        perfil_id: userId,
+        medico_nombre: med.nombre,
+        especialidad_medico: med.esp,
+        titulo: v.tagLabel?.replace(/^[^\s]+ /, '') || v.tag,
+        descripcion: v.cuerpo,
+        resumen_ia: v.ia || null,
+        tipo_documento: v.tag === 'doc' ? 'documento' : 'nota',
+        created_at: fechaDemoParaVisita(v.id)
+      });
+    }
+  }
+
+  if (filas.length > 0) {
+    await db.from('eventos_salud').insert(filas);
+    console.log(`Luisa: ${filas.length} eventos de demo cargados a Supabase`);
+  }
+
+  // Actualizar perfil con datos del paciente demo
+  await db.from('perfiles_luisa').upsert({
+    id: userId,
+    nombre_completo: D.paciente.nombre,
+    tipo_sangre: D.paciente.sangre,
+    alergias_conocidas: D.paciente.alergias,
+    updated_at: new Date().toISOString()
+  }, { onConflict: 'id' });
+}
+
+// Fechas aproximadas para los eventos demo (por id)
+function fechaDemoParaVisita(id) {
+  const mapa = {
+    v1:'2022-10-05', v2:'2023-06-14', v3:'2023-06-14',
+    v4:'2025-01-03', v5:'2025-01-03', v6:'2025-07-14',
+    v7:'2025-05-08', v8:'2025-05-08', v9:'2025-05-08',
+    v10:'2025-05-08', v11:'2025-08-18', v12:'2022-01-15',
+    v13:'2023-03-10', v14:'2025-02-12', v15:'2025-02-12',
+    v16:'2023-09-08', v17:'2023-09-08', v18:'2024-04-10',
+    v19:'2024-04-10', v20:'2023-11-20', v21:'2023-11-20',
+    v22:'2025-03-05', v23:'2024-04-03', v24:'2024-04-03',
+    v25:'2024-06-22',
+  };
+  return mapa[id] ? new Date(mapa[id]).toISOString() : new Date().toISOString();
+}
+
+// ─── INIT ─────────────────────────────────────────────────
+async function init() {
+  render(`<div style="display:flex;align-items:center;justify-content:center;height:300px;color:var(--ink-faint);font-size:14px">Cargando...</div>`);
+
+  // Manejar magic link callback
+  const hash = window.location.hash;
+  if (hash && hash.includes('access_token')) {
+    const { data: { session } } = await db.auth.getSession();
+    if (session) {
+      window.history.replaceState(null, '', window.location.pathname);
+      usuarioActual = session.user;
+    }
+  } else {
+    const { data: { session } } = await db.auth.getSession();
+    if (session) usuarioActual = session.user;
+  }
+
+  if (!usuarioActual) {
+    pantallaLogin();
+    return;
+  }
+
+  // Seed de datos demo si el usuario es nuevo (solo primera vez)
+  await seedDemoSiEstaVacio(usuarioActual.id);
+
+  // Cargar datos reales
+  const [perfil, medicosDB] = await Promise.all([
+    cargarPerfil(usuarioActual.id),
+    cargarMedicos(usuarioActual.id)
+  ]);
+
+  if (perfil) {
+    D.paciente.nombre = perfil.nombre_completo || usuarioActual.email;
+    if (perfil.tipo_sangre) D.paciente.sangre = perfil.tipo_sangre;
+    if (perfil.alergias_conocidas) D.paciente.alergias = perfil.alergias_conocidas;
+  }
+
+  if (medicosDB && medicosDB.length > 0) D.medicos = medicosDB;
+
+  pantallaLista();
+}
+
+init();
+</script>
+</body>
+</html>
