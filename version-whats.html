@@ -3,186 +3,148 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Luisa — Versión WhatsApp</title>
+<title>Luisa — Mi Expediente Médico</title>
 <style>
-  :root {
-    --bg: #F5F7FA;
-    --card: #FFFFFF;
-    --paper: #F0F2F5;
-    --ink: #0F1F3D;
-    --ink-soft: #4B5C7A;
-    --ink-faint: #8A9BB8;
-    --line: #E2E8F0;
-    --navy: #1B3F72;
-    --navy-soft: #E8EEF7;
-    --teal: #00C9A7;
-    --teal-soft: #E0FAF5;
-    --teal-deep: #009E84;
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0; background: #CBD5E1;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    display: flex; justify-content: center; padding: 24px 12px; min-height: 100vh;
-  }
-  #phone {
-    width: 400px; max-width: 100%; background: var(--bg); border-radius: 22px; overflow: hidden;
-    border: 1px solid var(--line); box-shadow: 0 12px 40px rgba(27,63,114,0.18);
-    display: flex; flex-direction: column; min-height: 720px; position: relative;
-  }
-  .hidden { display: none !important; }
+:root {
+  --bg:#F5F7FA; --card:#FFFFFF; --ink:#0F1F3D; --ink-soft:#4B5C7A; --ink-faint:#8A9BB8;
+  --line:#E2E8F0; --navy:#1B3F72; --navy-soft:#E8EEF7;
+  --teal:#00C9A7; --teal-soft:#E0FAF5; --teal-deep:#009E84;
+  --amber:#FEF3C7; --amber-ink:#B45309;
+  --purple:#F3E8FF; --purple-ink:#7C3AED;
+  --red-soft:#FEE2E2; --red-ink:#DC2626;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:#CBD5E1;display:flex;justify-content:center;
+  padding:24px 12px;min-height:100vh;
+}
+#phone{
+  width:400px;max-width:100%;background:var(--bg);border-radius:22px;overflow:hidden;
+  border:1px solid var(--line);box-shadow:0 12px 40px rgba(27,63,114,0.18);
+  display:flex;flex-direction:column;min-height:720px;position:relative;
+}
+.hidden{display:none!important}
 
-  /* Topbar */
-  .topbar {
-    display: flex; align-items: center; gap: 10px; padding: 14px 16px;
-    background: var(--navy); flex-shrink: 0;
-  }
-  .topbar .back { color: white; font-size: 20px; cursor: pointer; line-height: 1; background: none; border: none; padding: 0; }
-  .topbar-title { flex: 1; min-width: 0; }
-  .topbar-title p.t { margin: 0; font-size: 16px; font-weight: 700; color: white; }
-  .topbar-title p.s { margin: 0; font-size: 11.5px; color: rgba(255,255,255,0.65); }
-  .topbar-brand { font-size: 20px; font-weight: 800; color: white; letter-spacing: -0.5px; }
-  .topbar-brand span { color: var(--teal); }
+/* Animaciones */
+.slide-in{animation:slideIn .22s cubic-bezier(.25,.46,.45,.94) both}
+.slide-back{animation:slideBack .22s cubic-bezier(.25,.46,.45,.94) both}
+@keyframes slideIn{from{transform:translateX(100%);opacity:.7}to{transform:translateX(0);opacity:1}}
+@keyframes slideBack{from{transform:translateX(-30%);opacity:.7}to{transform:translateX(0);opacity:1}}
 
-  .screen { display: flex; flex-direction: column; flex: 1; min-height: 0; }
-  .scroll { flex: 1; overflow-y: auto; }
+/* Topbar */
+.topbar{display:flex;align-items:center;gap:10px;padding:13px 16px;background:var(--navy);flex-shrink:0}
+.topbar .brand{font-size:20px;font-weight:800;color:white;letter-spacing:-.5px}
+.topbar .brand span{color:var(--teal)}
+.topbar .ttl{flex:1;min-width:0}
+.topbar .ttl p{margin:0}
+.topbar .ttl .t{font-size:15px;font-weight:700;color:white}
+.topbar .ttl .s{font-size:11px;color:rgba(255,255,255,.6)}
+.topbar .ico-btn{background:none;border:none;color:rgba(255,255,255,.75);font-size:20px;cursor:pointer;padding:4px;line-height:1}
 
-  /* Transiciones de pantalla estilo nativo */
-  #phone { perspective: 1000px; }
-  .slide-in  { animation: slideIn  0.22s cubic-bezier(.25,.46,.45,.94) both; }
-  .slide-out { animation: slideOut 0.18s cubic-bezier(.55,0,1,.45) both; }
-  @keyframes slideIn  { from { transform: translateX(100%); opacity:.6; } to { transform: translateX(0); opacity:1; } }
-  @keyframes slideOut { from { transform: translateX(0);    opacity:1; } to { transform: translateX(-30%); opacity:0; } }
+.screen{display:flex;flex-direction:column;flex:1;min-height:0}
+.scroll{flex:1;overflow-y:auto}
 
-  /* Barra de búsqueda */
-  .searchbar {
-    display: flex; align-items: center; gap: 8px; background: var(--card);
-    border: 1px solid var(--line); border-radius: 10px; padding: 0 12px;
-    margin: 10px 14px 4px;
-  }
-  .searchbar input {
-    flex: 1; border: none; outline: none; background: transparent;
-    font-size: 13.5px; color: var(--ink); padding: 10px 0;
-  }
-  .searchbar input::placeholder { color: var(--ink-faint); }
+/* Barra búsqueda */
+.searchbar{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:0 12px;margin:10px 14px 4px}
+.searchbar input{flex:1;border:none;outline:none;background:transparent;font-size:13.5px;color:var(--ink);padding:10px 0}
+.searchbar input::placeholder{color:var(--ink-faint)}
 
-  /* Fila de chat (médico) */
-  .chat-row {
-    width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 16px;
-    background: none; border: none; border-bottom: 1px solid var(--line);
-    cursor: pointer; text-align: left; transition: background 0.12s;
-  }
-  .chat-row:active { background: var(--navy-soft); }
-  .chat-row .meta { flex: 1; min-width: 0; }
-  .chat-row .meta p.n { margin: 0; font-size: 14.5px; font-weight: 600; color: var(--ink); }
-  .chat-row .meta p.esp { margin: 1px 0 0; font-size: 11.5px; color: var(--teal-deep); font-weight: 500; }
-  .chat-row .meta p.l { margin: 2px 0 0; font-size: 12.5px; color: var(--ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .chat-row .right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
-  .chat-row .date { font-size: 11px; color: var(--ink-faint); }
-  .count-badge { background: var(--teal); color: white; font-size: 11px; font-weight: 700; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+/* Barra datos críticos */
+.critico-bar{display:flex;background:var(--card);border-bottom:1px solid var(--line);flex-shrink:0}
+.critico-item{flex:1;display:flex;align-items:center;gap:5px;padding:7px 10px;border-right:1px solid var(--line);font-size:12px}
+.critico-item:last-child{border-right:none}
+.cl{font-size:9.5px;color:var(--ink-faint);display:block;line-height:1;margin-bottom:1px}
+.cv{font-weight:700;color:var(--ink);font-size:11.5px}
 
-  /* Avatar */
-  .avatar {
-    border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
-    font-weight: 700; color: white; font-size: 14px;
-  }
+/* Chat row — expediente o médico */
+.chat-row{
+  width:100%;display:flex;align-items:center;gap:12px;padding:12px 16px;
+  background:none;border:none;border-bottom:1px solid var(--line);
+  cursor:pointer;text-align:left;transition:background .12s;
+}
+.chat-row:active{background:var(--navy-soft)}
+.chat-row .meta{flex:1;min-width:0}
+.chat-row .meta .n{font-size:14.5px;font-weight:600;color:var(--ink)}
+.chat-row .meta .sub{font-size:11.5px;color:var(--teal-deep);font-weight:500;margin-top:1px}
+.chat-row .meta .prev{font-size:12.5px;color:var(--ink-soft);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-row .right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.chat-row .ts{font-size:11px;color:var(--ink-faint)}
+.badge{background:var(--teal);color:white;font-size:11px;font-weight:700;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center}
 
-  /* Tarjeta sticky datos críticos */
-  .critico-bar {
-    display: flex; gap: 0; background: var(--card); border-bottom: 1px solid var(--line); flex-shrink: 0;
-  }
-  .critico-item {
-    flex: 1; display: flex; align-items: center; gap: 6px; padding: 8px 12px;
-    border-right: 1px solid var(--line); font-size: 12px;
-  }
-  .critico-item:last-child { border-right: none; }
-  .critico-label { font-size: 10px; color: var(--ink-faint); display: block; line-height: 1; margin-bottom: 1px; }
-  .critico-val { font-weight: 700; color: var(--ink); font-size: 12px; }
+/* Avatar */
+.av{border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700;color:white}
 
-  /* Hilo de conversación */
-  .thread { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
-  .msg-system {
-    align-self: center; font-size: 11px; color: var(--ink-faint);
-    background: rgba(255,255,255,0.8); padding: 3px 10px; border-radius: 999px;
-    border: 1px solid var(--line); margin: 4px 0;
-  }
-  /* Evento subido por el paciente (derecha) */
-  .msg-yo {
-    align-self: flex-end; max-width: 80%;
-    background: var(--teal-soft); border: 1px solid rgba(0,201,167,0.2);
-    border-radius: 12px 2px 12px 12px; padding: 10px 12px;
-  }
-  /* Nota del médico / resumen IA (izquierda) */
-  .msg-luisa {
-    align-self: flex-start; max-width: 82%;
-    background: var(--card); border: 1px solid var(--line);
-    border-radius: 2px 12px 12px 12px; padding: 10px 12px;
-  }
-  .msg-tag { font-size: 10.5px; font-weight: 600; margin-bottom: 4px; }
-  .msg-tag.doc { color: var(--teal-deep); }
-  .msg-tag.nota { color: var(--navy); }
-  .msg-tag.med { color: #7C3AED; }
-  .msg-tag.cita { color: #B45309; }
-  .msg-body { font-size: 13.5px; color: var(--ink); line-height: 1.5; }
-  .msg-time { font-size: 10.5px; color: var(--ink-faint); margin-top: 5px; text-align: right; }
-  .chip-ia { display: inline-block; font-size: 10.5px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: var(--teal-soft); color: var(--teal-deep); margin-top: 5px; }
-  .med-card { background: var(--navy-soft); border-radius: 8px; padding: 8px 10px; margin-top: 6px; }
-  .med-card p { margin: 0; font-size: 12.5px; }
-  .med-card p.nm { font-weight: 700; color: var(--navy); }
-  .med-card p.dt { color: var(--ink-soft); margin-top: 2px; }
+/* Hilo */
+.thread{padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.msg-sys{align-self:center;font-size:11px;color:var(--ink-faint);background:rgba(255,255,255,.85);padding:3px 11px;border-radius:999px;border:1px solid var(--line);margin:4px 0;text-align:center}
 
-  /* Composer */
-  .composer {
-    display: flex; align-items: center; gap: 8px; padding: 10px 12px;
-    border-top: 1px solid var(--line); background: var(--card); flex-shrink: 0;
-  }
-  .composer-btn {
-    width: 40px; height: 40px; border-radius: 50%; background: var(--teal);
-    border: none; color: white; font-size: 20px; display: flex; align-items: center; justify-content: center;
-    cursor: pointer; flex-shrink: 0;
-  }
-  .composer input {
-    flex: 1; border: 1px solid var(--line); border-radius: 20px; padding: 9px 14px;
-    font-size: 13.5px; background: var(--bg); color: var(--ink); outline: none;
-  }
+.msg-yo{align-self:flex-end;max-width:82%;background:var(--teal-soft);border:1px solid rgba(0,201,167,.2);border-radius:12px 2px 12px 12px;padding:10px 12px}
+.msg-luisa{align-self:flex-start;max-width:82%;background:var(--card);border:1px solid var(--line);border-radius:2px 12px 12px 12px;padding:10px 12px}
 
-  /* FAB */
-  .fab {
-    position: absolute; right: 20px; bottom: 72px; width: 50px; height: 50px; border-radius: 50%;
-    background: var(--teal); border: none; color: #fff; display: flex; align-items: center; justify-content: center;
-    cursor: pointer; box-shadow: 0 4px 16px rgba(0,201,167,0.4); font-size: 22px; z-index: 10;
-  }
+.msg-tag{font-size:10.5px;font-weight:700;margin-bottom:5px;text-transform:uppercase;letter-spacing:.3px}
+.tag-receta{color:var(--purple-ink)}
+.tag-estudio{color:#0369A1}
+.tag-resultado{color:var(--teal-deep)}
+.tag-diagnostico{color:var(--red-ink)}
+.tag-nota{color:var(--navy)}
+.tag-cita{color:var(--amber-ink)}
+.tag-referencia{color:#059669}
+.tag-doc{color:var(--teal-deep)}
 
-  /* Modal bottom sheet */
-  .sheet-overlay {
-    position: absolute; inset: 0; background: rgba(15,31,61,0.5); z-index: 20;
-    display: flex; align-items: flex-end;
-  }
-  .sheet {
-    background: var(--card); width: 100%; border-radius: 20px 20px 0 0; padding: 20px 16px 28px;
-    animation: slideUp 0.28s ease-out;
-  }
-  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-  .sheet-handle { width: 36px; height: 4px; background: var(--line); border-radius: 99px; margin: 0 auto 16px; }
-  .sheet-title { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 14px; text-align: center; }
-  .sheet-option {
-    width: 100%; display: flex; align-items: center; gap: 14px; padding: 14px 12px;
-    background: var(--bg); border-radius: 12px; border: none; cursor: pointer;
-    margin-bottom: 10px; text-align: left;
-  }
-  .sheet-option:active { background: var(--teal-soft); }
-  .sheet-option .ico { font-size: 26px; }
-  .sheet-option .lbl { font-size: 14px; font-weight: 600; color: var(--ink); }
-  .sheet-option .sub { font-size: 12px; color: var(--ink-soft); margin-top: 1px; }
-  .btn-cancel { width: 100%; padding: 12px; background: none; border: 1px solid var(--line); border-radius: 12px; font-size: 13.5px; color: var(--ink-soft); cursor: pointer; margin-top: 4px; }
+.msg-body{font-size:13.5px;color:var(--ink);line-height:1.55}
+.msg-time{font-size:10.5px;color:var(--ink-faint);margin-top:6px;text-align:right}
+.tick{color:var(--teal);font-size:11px;margin-left:3px}
 
-  /* Botón agregar médico */
-  .add-row {
-    width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 16px;
-    background: none; border: none; border-bottom: 1px solid var(--line);
-    cursor: pointer; text-align: left; color: var(--ink-soft);
-  }
-  .add-circle { width: 48px; height: 48px; border-radius: 50%; border: 2px dashed var(--line); display: flex; align-items: center; justify-content: center; font-size: 22px; color: var(--ink-faint); flex-shrink: 0; }
+/* Tarjetas dentro de mensaje */
+.med-card{background:var(--purple);border-radius:8px;padding:8px 10px;margin-top:6px}
+.med-card .mn{font-weight:700;color:var(--purple-ink);font-size:13px}
+.med-card .md{color:var(--ink-soft);font-size:12px;margin-top:2px}
+.lab-card{background:#EFF6FF;border-radius:8px;padding:8px 10px;margin-top:6px}
+.lab-card .lv{font-size:13px;color:var(--ink)}
+.lab-card .lv span{font-weight:700}
+.lab-card .lv .ok{color:var(--teal-deep)}
+.lab-card .lv .warn{color:var(--amber-ink)}
+.lab-card .lv .bad{color:var(--red-ink)}
+.cita-card{background:var(--amber);border-radius:8px;padding:8px 10px;margin-top:6px;display:flex;align-items:center;gap:8px}
+.cita-card .fecha{font-weight:700;color:var(--amber-ink);font-size:13px}
+.ia-block{margin-top:8px;padding:8px 10px;background:rgba(0,201,167,.08);border-left:3px solid var(--teal);border-radius:0 6px 6px 0;font-size:12.5px;color:#007A66;line-height:1.5}
+.chip-ia{display:inline-block;font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--teal-soft);color:var(--teal-deep);margin-top:5px}
+.alerta{margin-top:6px;font-size:11.5px;color:var(--amber-ink);background:var(--amber);border-radius:6px;padding:5px 8px}
+
+/* Composer */
+.composer{display:flex;align-items:center;gap:8px;padding:10px 12px;border-top:1px solid var(--line);background:var(--card);flex-shrink:0}
+.cam-btn{width:40px;height:40px;border-radius:50%;background:var(--teal);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;flex-shrink:0}
+.composer-input{flex:1;border:1px solid var(--line);border-radius:22px;padding:10px 16px;font-size:14px;background:var(--bg);color:var(--ink);outline:none}
+.consulta-btn{background:none;border:1px solid var(--line);border-radius:20px;padding:7px 12px;font-size:12px;font-weight:600;color:var(--navy);cursor:pointer;white-space:nowrap}
+
+/* Sheet */
+.sheet-overlay{position:absolute;inset:0;background:rgba(15,31,61,.5);z-index:20;display:flex;align-items:flex-end}
+.sheet{background:var(--card);width:100%;border-radius:20px 20px 0 0;padding:20px 16px 28px;animation:slideUp .28s ease-out}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sheet-handle{width:36px;height:4px;background:var(--line);border-radius:99px;margin:0 auto 14px}
+.sheet-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:12px;text-align:center}
+.sheet-opt{width:100%;display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg);border-radius:12px;border:none;cursor:pointer;margin-bottom:8px;text-align:left}
+.sheet-opt:active{background:var(--teal-soft)}
+.sheet-opt .ico{font-size:24px;width:36px;text-align:center;flex-shrink:0}
+.sheet-opt .lbl{font-size:13.5px;font-weight:600;color:var(--ink)}
+.sheet-opt .sub{font-size:11.5px;color:var(--ink-soft);margin-top:1px}
+.btn-cancel{width:100%;padding:12px;background:none;border:1px solid var(--line);border-radius:12px;font-size:13.5px;color:var(--ink-soft);cursor:pointer;margin-top:4px}
+
+/* Add row */
+.add-row{width:100%;display:flex;align-items:center;gap:12px;padding:12px 16px;background:none;border:none;border-bottom:1px solid var(--line);cursor:pointer;text-align:left}
+.add-circle{width:48px;height:48px;border-radius:50%;border:2px dashed var(--line);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--ink-faint);flex-shrink:0}
+
+/* Expediente selector badge */
+.exp-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.15);border-radius:20px;padding:4px 10px;font-size:11px;color:white;cursor:pointer;border:none}
+
+/* Form */
+.form-input{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px;background:var(--bg);color:var(--ink);outline:none;margin-bottom:10px}
+.form-select{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:13.5px;background:var(--bg);color:var(--ink);outline:none;margin-bottom:10px}
+.btn-primary{width:100%;background:var(--navy);color:white;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer}
+.btn-primary:active{background:#142f55}
+.form-label{font-size:12px;color:var(--ink-soft);margin-bottom:4px;display:block;font-weight:600}
+.section-pad{padding:20px 18px;display:flex;flex-direction:column;gap:0}
 </style>
 </head>
 <body>
@@ -191,284 +153,445 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ─── SUPABASE ─────────────────────────────────────────────
-const SUPA_URL  = 'https://isxspjlwuzbbtpamkknq.supabase.co';
-const SUPA_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlzeHNwamx3dXpiYnRwYW1ra25xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDYwMjMsImV4cCI6MjA5NTM4MjAyM30.D5iWO9K7137hFW_pBx9xYASHFfnyUcDthi9_A-6pksA';
+const SUPA_URL = 'https://isxspjlwuzbbtpamkknq.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlzeHNwamx3dXpiYnRwYW1ra25xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MDYwMjMsImV4cCI6MjA5NTM4MjAyM30.D5iWO9K7137hFW_pBx9xYASHFfnyUcDthi9_A-6pksA';
 const db = window.supabase.createClient(SUPA_URL, SUPA_KEY);
 
-// ─── DATOS DEMO REALISTAS ─────────────────────────────────
-const D = {
-  paciente: {
-    nombre: 'Roberto Aguilar Cota', edad: 58, sangre: 'O+',
-    alergias: 'Penicilina', meds: 4,
-    medicos_activos: 6, ultimo_evento: 'hace 2 días'
-  },
-  medicos: [
+// ─── ESTADO ───────────────────────────────────────────────
+let usuarioActual   = null;
+let expedienteActual = null;
+let medicoActual    = null;
+
+// ─── DATOS DEMO ───────────────────────────────────────────
+const APP = {
+  expedientes: [
     {
-      id: 'gonzalez', nombre: 'Dr. González Ruiz', esp: 'Cardiología',
-      ini: 'GR', color: '#DC2626',
-      ultimo: 'Presión 124/80 ✓  —  continúa Losartán 50 mg', fecha: '14 jul 2025',
-      visitas: [
-        { id:'s1', sistema: '5 octubre 2022' },
-        { id:'v1', lado:'yo', tag:'nota', tagLabel:'📝 Primera consulta',
-          cuerpo: 'Referido por Dr. Herrera. Presión 148/96 al llegar. Diagnóstico: hipertensión arterial estadio 1. Inició Enalapril 10 mg cada 12 hrs + dieta baja en sodio.',
-          hora: '9:10 AM', alerta: '⚠️ Sin antecedentes familiares cardíacos declarados' },
-        { id:'s2', sistema: '14 junio 2023' },
-        { id:'v2', lado:'yo', tag:'nota', tagLabel:'📝 Control semestral',
-          cuerpo: 'Tos seca persistente desde hace 3 meses. El médico atribuye el efecto al Enalapril. Cambió medicamento a Losartán 50 mg una vez al día.',
-          hora: '11:20 AM' },
-        { id:'v3', lado:'yo', tag:'doc', tagLabel:'📄 ECG + ecocardiograma',
-          cuerpo: 'Estudios solicitados por primera vez. Realizados en Laboratorios Médicos del Chopo.',
-          ia: 'ECG normal, ritmo sinusal 72 lpm. Ecocardiograma: fracción de eyección 62% (normal). Masa ventricular izquierda dentro de rango. Sin valvulopatías. Conclusión: corazón estructuralmente sano.',
-          hora: '12:05 PM' },
-        { id:'s3', sistema: '3 enero 2025' },
-        { id:'v4', lado:'yo', tag:'doc', tagLabel:'📄 Laboratorios — Perfil lipídico',
-          cuerpo: 'Resultados completos de química sanguínea y perfil lipídico.',
-          ia: 'Colesterol total 189 mg/dL ✓  |  LDL 118 mg/dL (meta <130 ✓)  |  HDL 48 mg/dL  |  Triglicéridos 162 mg/dL (límite alto)  |  Glucosa 98 mg/dL (normal)  |  Creatinina 0.9 mg/dL (función renal normal).\n\nRecomendación del médico: reducir consumo de carbohidratos refinados para bajar triglicéridos.',
-          meds: [{ nm: 'Losartán 50 mg', dt: '1 tableta cada mañana con o sin alimentos' }],
-          hora: '10:05 AM' },
-        { id:'s4', sistema: '14 julio 2025' },
-        { id:'v5', lado:'yo', tag:'doc', tagLabel:'📄 Control trimestral',
-          cuerpo: 'Toma de presión y revisión general.',
-          ia: 'Presión arterial 124/80 mmHg — excelente control. Peso 82 kg (-2 kg desde enero). Frecuencia cardíaca 68 lpm. Médico muy satisfecho con la evolución. Próxima cita en 6 meses (enero 2026).',
-          meds: [{ nm: 'Losartán 50 mg', dt: 'Continúa igual — no modificar' }],
-          hora: '9:45 AM' },
-        { id:'v6', lado:'yo', tag:'nota', tagLabel:'📝 Nota personal',
-          cuerpo: 'Me dijo que si los triglicéridos bajan de 150 en enero, ya no necesito control tan frecuente.',
-          hora: '9:58 AM' },
+      id:'roberto', nombre:'Roberto Aguilar', edad:58, relacion:'Yo',
+      sangre:'O+', alergias:'Penicilina', meds:4,
+      color:'#1B3F72', ini:'RA',
+      medicos: [
+        {
+          id:'gonzalez', nombre:'Dr. González Ruiz', esp:'Cardiología',
+          ini:'GR', color:'#DC2626',
+          ultimo:'Presión 124/80 ✓ · continúa Losartán', fecha:'2025-07-14',
+          visitas:[
+            {id:'s1', sistema:'5 octubre 2022 — Primera consulta'},
+            {id:'v1', lado:'yo', tipo:'diagnostico', tagLabel:'🩺 Diagnóstico',
+             cuerpo:'Hipertensión arterial estadio 1. Presión 148/96 al llegar. Referido por Dr. Herrera.',
+             alerta:'⚠️ Sin antecedentes familiares cardíacos declarados', hora:'9:10 AM', guardado:true},
+            {id:'v2', lado:'yo', tipo:'receta', tagLabel:'💊 Receta',
+             cuerpo:'Tratamiento inicial para HTA.',
+             meds:[{mn:'Enalapril 10 mg', md:'1 tableta cada 12 hrs — con o sin alimentos'}],
+             hora:'9:25 AM', guardado:true},
+            {id:'s2', sistema:'14 junio 2023 — Control semestral'},
+            {id:'v3', lado:'yo', tipo:'nota', tagLabel:'📝 Nota',
+             cuerpo:'Tos seca persistente 3 meses → efecto secundario del Enalapril. Médico cambia medicamento.',
+             hora:'11:20 AM', guardado:true},
+            {id:'v4', lado:'yo', tipo:'receta', tagLabel:'💊 Receta — Cambio',
+             cuerpo:'Sustitución por efecto secundario.',
+             meds:[{mn:'Losartán 50 mg', md:'1 tableta cada mañana — mismo efecto, sin tos'}],
+             hora:'11:35 AM', guardado:true},
+            {id:'v5', lado:'yo', tipo:'estudio_orden', tagLabel:'🔬 Estudios ordenados',
+             cuerpo:'ECG + Ecocardiograma por primera vez.',
+             estudios:['Electrocardiograma', 'Ecocardiograma 2D', 'Perfil lipídico'],
+             hora:'11:40 AM', guardado:true},
+            {id:'s3', sistema:'3 enero 2025 — Control + resultados'},
+            {id:'v6', lado:'yo', tipo:'resultado', tagLabel:'📊 Resultados de laboratorio',
+             cuerpo:'Perfil lipídico y función renal.',
+             ia:'Colesterol total 189 ✓ | LDL 118 mg/dL (meta <130 ✓) | HDL 48 | Triglicéridos 162 (límite alto — reducir carbohidratos) | Glucosa 98 ✓ | Creatinina 0.9 ✓\n\nFunción renal normal. Corazón estructuralmente sano en eco.',
+             labs:[
+               {val:'LDL 118 mg/dL', estado:'ok', ref:'meta <130'},
+               {val:'Triglicéridos 162 mg/dL', estado:'warn', ref:'normal <150'},
+               {val:'Creatinina 0.9 mg/dL', estado:'ok', ref:'normal <1.2'},
+               {val:'Glucosa 98 mg/dL', estado:'ok', ref:'normal <100'},
+             ],
+             hora:'10:05 AM', guardado:true},
+            {id:'v7', lado:'yo', tipo:'cita', tagLabel:'📅 Próxima cita',
+             cuerpo:'Control trimestral.',
+             cita:{fecha:'14 julio 2025', lugar:'Consultorio 302', motivo:'Control presión + nuevo lipídico'},
+             hora:'10:15 AM', guardado:true},
+            {id:'s4', sistema:'14 julio 2025 — Control trimestral'},
+            {id:'v8', lado:'yo', tipo:'resultado', tagLabel:'📊 Control',
+             cuerpo:'Toma de presión y revisión general.',
+             ia:'Presión 124/80 ✓ Excelente control. Peso 82 kg (-2 kg). FC 68 lpm. Médico muy satisfecho.',
+             labs:[
+               {val:'Presión 124/80 mmHg', estado:'ok', ref:'meta <130/80'},
+               {val:'Peso 82 kg', estado:'ok', ref:'bajó 2 kg desde enero'},
+             ],
+             hora:'9:45 AM', guardado:true},
+            {id:'v9', lado:'yo', tipo:'cita', tagLabel:'📅 Próxima cita',
+             cuerpo:'Siguiente control + lipídico completo.',
+             cita:{fecha:'Enero 2026', lugar:'Consultorio 302', motivo:'Control semestral + labs'},
+             hora:'9:55 AM', guardado:true},
+          ]
+        },
+        {
+          id:'carrillo', nombre:'Dra. Carrillo Guajardo', esp:'Dermatología',
+          ini:'CG', color:'#7C3AED',
+          ultimo:'3 meses: progreso moderado — ajuste dosis', fecha:'2025-08-18',
+          visitas:[
+            {id:'s5', sistema:'8 mayo 2025 — Primera consulta'},
+            {id:'v10', lado:'yo', tipo:'diagnostico', tagLabel:'🩺 Diagnóstico',
+             cuerpo:'Alopecia androgénica grado III (escala Norwood). No es alopecia areata.',
+             hora:'10:15 AM', guardado:true},
+            {id:'v11', lado:'yo', tipo:'receta', tagLabel:'💊 Receta',
+             cuerpo:'Tratamiento para alopecia androgénica.',
+             meds:[
+               {mn:'Finasterida 1 mg', md:'1 tab diaria — tomar a la misma hora, indefinido'},
+               {mn:'Minoxidil 5% Folcare', md:'1 mL mañana y noche en cuero cabelludo seco'},
+               {mn:'Revita Shampoo', md:'Uso diario — actúa como coadyuvante'},
+             ],
+             alerta:'⚠️ Finasterida: NO manipular si hay embarazo en el hogar',
+             hora:'10:48 AM', guardado:true},
+            {id:'v12', lado:'yo', tipo:'nota', tagLabel:'📝 Nota personal',
+             cuerpo:'Me explicó que resultados visibles a partir de 4-6 meses. Tomó foto de línea base. Disfunción eréctil en 2-3% — reversible si se suspende.',
+             hora:'11:05 AM', guardado:true},
+            {id:'s6', sistema:'18 agosto 2025 — Revisión 3 meses'},
+            {id:'v13', lado:'yo', tipo:'resultado', tagLabel:'📊 Revisión 3 meses',
+             cuerpo:'Llevé fotos comparativas del antes (mayo).',
+             ia:'Progreso moderado: reducción del 30% en caída diaria. Densidad en coronilla mejoró levemente. Calificación: "resultado esperado para 3 meses".',
+             hora:'4:20 PM', guardado:true},
+            {id:'v14', lado:'yo', tipo:'receta', tagLabel:'💊 Ajuste de dosis',
+             cuerpo:'Finasterida continúa igual. Minoxidil sube frecuencia.',
+             meds:[
+               {mn:'Finasterida 1 mg', md:'Continúa igual — no modificar'},
+               {mn:'Minoxidil 5% Folcare', md:'Subir a 3 aplicaciones/día: mañana, tarde y noche'},
+             ],
+             hora:'4:30 PM', guardado:true},
+            {id:'v15', lado:'yo', tipo:'cita', tagLabel:'📅 Próxima cita',
+             cuerpo:'A los 6 meses evaluamos PRP si no hay mejoría considerable.',
+             cita:{fecha:'Noviembre 2025', lugar:'Consultorio Dra. Carrillo', motivo:'Revisión 6 meses — decisión PRP'},
+             hora:'4:38 PM', guardado:true},
+          ]
+        },
+        {
+          id:'herrera', nombre:'Dr. Herrera Campos', esp:'Médico general',
+          ini:'HC', color:'#059669',
+          ultimo:'Chequeo anual — todo en orden', fecha:'2025-02-12',
+          visitas:[
+            {id:'s7', sistema:'12 febrero 2025 — Chequeo anual'},
+            {id:'v16', lado:'yo', tipo:'resultado', tagLabel:'📊 Chequeo anual',
+             cuerpo:'Revisión completa + vacunas.',
+             ia:'Peso 84 kg ✓ | Presión 126/82 ✓ | Glucosa 96 mg/dL ✓ | IMC 27.8\nVacunas: influenza reciente, tétanos vigente hasta 2028. Pendiente hepatitis B 3ª dosis.',
+             labs:[
+               {val:'Glucosa 96 mg/dL', estado:'ok', ref:'normal <100'},
+               {val:'Presión 126/82', estado:'ok', ref:'normal'},
+               {val:'Hepatitis B 3ª dosis', estado:'warn', ref:'PENDIENTE'},
+             ],
+             hora:'10:50 AM', guardado:true},
+            {id:'v17', lado:'yo', tipo:'nota', tagLabel:'📝 Nota',
+             cuerpo:'Me recordó hacer colonoscopía de rutina antes de los 60. Lo tengo pendiente para este año.',
+             hora:'11:05 AM', guardado:true},
+            {id:'v18', lado:'yo', tipo:'estudio_orden', tagLabel:'🔬 Estudios solicitados',
+             cuerpo:'Estudios anuales de rutina.',
+             estudios:['Biometría hemática completa','Química sanguínea 27 elementos','Perfil tiroideo TSH','PSA (próstata) — primer vez a los 58'],
+             hora:'11:10 AM', guardado:true},
+          ]
+        },
+        {
+          id:'soto', nombre:'Dr. Soto Villanueva', esp:'Ortopedia',
+          ini:'SV', color:'#B45309',
+          ultimo:'Alta: rodilla al 95% — puede volver al pádel', fecha:'2024-06-22',
+          visitas:[
+            {id:'s8', sistema:'3 abril 2024 — Urgencia'},
+            {id:'v19', lado:'yo', tipo:'diagnostico', tagLabel:'🩺 Diagnóstico urgencia',
+             cuerpo:'Dolor agudo rodilla derecha post pádel. Inflamación visible.',
+             hora:'6:30 PM', guardado:true},
+            {id:'v20', lado:'yo', tipo:'estudio_orden', tagLabel:'🔬 Estudios ordenados',
+             cuerpo:'Para descartar lesión meniscal.',
+             estudios:['Rayos X rodilla derecha AP y lateral','RMN rodilla derecha con contraste'],
+             hora:'6:45 PM', guardado:true},
+            {id:'v21', lado:'yo', tipo:'resultado', tagLabel:'📊 Resultados RMN',
+             cuerpo:'Recibidos 2 días después.',
+             ia:'Rayos X: sin fracturas. RMN: tendinitis rotuliana grado II. Sin lesión meniscal ni ligamentaria.',
+             labs:[
+               {val:'Fractura', estado:'ok', ref:'descartada'},
+               {val:'Lesión meniscal', estado:'ok', ref:'descartada'},
+               {val:'Tendinitis rotuliana', estado:'warn', ref:'grado II — tratable'},
+             ],
+             hora:'8:15 PM', guardado:true},
+            {id:'v22', lado:'yo', tipo:'receta', tagLabel:'💊 Tratamiento',
+             cuerpo:'Manejo conservador por 6 semanas.',
+             meds:[{mn:'Diclofenaco 100 mg SR', md:'1 tab diaria con alimentos — SOLO 10 días'}],
+             alerta:'⚠️ Reposo deportivo 4 semanas + fisioterapia 3x/semana × 6 semanas',
+             hora:'8:25 PM', guardado:true},
+            {id:'s9', sistema:'22 junio 2024 — Alta médica'},
+            {id:'v23', lado:'yo', tipo:'nota', tagLabel:'📝 Alta',
+             cuerpo:'18 sesiones de fisio completadas (Physio+ Polanco). Rodilla al 95%. Puede volver al pádel con rodillera las primeras 4 semanas.',
+             hora:'10:40 AM', guardado:true},
+          ]
+        },
       ]
     },
+
     {
-      id: 'carrillo', nombre: 'Dra. Carrillo Guajardo', esp: 'Dermatología',
-      ini: 'CG', color: '#7C3AED',
-      ultimo: '2ª revisión: progreso moderado — ajuste de dosis', fecha: '18 ago 2025',
-      visitas: [
-        { id:'s5', sistema: '8 mayo 2025' },
-        { id:'v7', lado:'yo', tag:'nota', tagLabel:'📝 Primera consulta',
-          cuerpo: 'Consulté por pérdida de cabello en zona de la coronilla y sienes. Diagnóstico: alopecia androgénica grado III (escala Norwood). Mencionó que no es alopecia areata como pensé.',
-          hora: '10:15 AM' },
-        { id:'v8', lado:'yo', tag:'doc', tagLabel:'📄 Receta — Mayo 2025',
-          cuerpo: 'Foto de receta de primera consulta.',
-          ia: 'Tratamiento para alopecia androgénica grado III:\n• Finasterida 1 mg — 1 tableta diaria indefinida\n• Minoxidil 5% solución (Folcare) — aplicar 1 mL en cuero cabelludo mañana y noche\n• Revita shampoo — uso diario\n\nNota médica: resultados visibles a partir de 4-6 meses. Foto de línea base tomada en consultorio.',
-          meds: [
-            { nm: 'Finasterida 1 mg', dt: '1 tableta diaria — tomar a la misma hora' },
-            { nm: 'Minoxidil 5% Folcare', dt: '1 mL mañana y noche en cuero cabelludo seco' },
-          ],
-          hora: '10:48 AM', alerta: '⚠️ Finasterida: no tocar si hay embarazo en el hogar' },
-        { id:'v9', lado:'yo', tag:'nota', tagLabel:'📝 Nota',
-          cuerpo: 'Me explicó que la Finasterida puede causar disfunción eréctil en 2-3% de los casos. Le pregunté si podía dejar de tomarla si pasa y dijo que sí, es reversible.',
-          hora: '11:02 AM' },
-        { id:'s6', sistema: '18 agosto 2025' },
-        { id:'v10', lado:'yo', tag:'doc', tagLabel:'📄 Fotos comparativas 3 meses',
-          cuerpo: 'Llevé fotos del antes (tomadas en mayo) para comparar.',
-          ia: 'Revisión a 3 meses: progreso moderado. Reducción del 30% en caída diaria según el conteo. Densidad en zona de coronilla mejoró levemente. La dermatóloga calificó el resultado como "esperado para este tiempo".\n\nAjuste: subir Minoxidil a aplicación 3 veces/día si tolera bien.',
-          meds: [
-            { nm: 'Finasterida 1 mg', dt: 'Continúa igual' },
-            { nm: 'Minoxidil 5% Folcare', dt: 'Subir a 3 aplicaciones/día — mañana, tarde y noche' },
-          ],
-          hora: '4:20 PM' },
-        { id:'v11', lado:'yo', tag:'nota', tagLabel:'📝 Nota',
-          cuerpo: 'Próxima cita en 3 meses (noviembre 2025). Si a los 6 meses no hay mejoría considerable, evaluaremos PRP (plasma rico en plaquetas).',
-          hora: '4:35 PM' },
+      id:'elena', nombre:'Elena Aguilar Vda.', edad:84, relacion:'Mamá',
+      sangre:'A+', alergias:'Ninguna conocida', meds:6,
+      color:'#DB2777', ini:'EA',
+      medicos:[
+        {
+          id:'rueda', nombre:'Dr. Rueda Sánchez', esp:'Geriatría',
+          ini:'RS', color:'#059669',
+          ultimo:'Control mensual — estable', fecha:'2025-08-05',
+          visitas:[
+            {id:'se1', sistema:'Agosto 2025 — Control mensual'},
+            {id:'ve1', lado:'yo', tipo:'resultado', tagLabel:'📊 Control mensual',
+             cuerpo:'Revisión general de salud.',
+             ia:'Presión 138/86 (controlada) | Glucosa 114 mg/dL (leve elevación, vigilar) | Sin caídas en el mes | Memoria: sin cambios respecto a agosto.',
+             labs:[
+               {val:'Presión 138/86', estado:'warn', ref:'meta <140/90 geriátrica'},
+               {val:'Glucosa 114 mg/dL', estado:'warn', ref:'normal <100'},
+             ],
+             hora:'10:00 AM', guardado:true},
+            {id:'ve2', lado:'yo', tipo:'receta', tagLabel:'💊 Medicamentos actuales',
+             cuerpo:'Régimen farmacológico actualizado.',
+             meds:[
+               {mn:'Amlodipino 5 mg', md:'1 tab cada mañana — hipertensión'},
+               {mn:'Metformina 500 mg', md:'1 tab con desayuno y cena — glucosa'},
+               {mn:'Atorvastatina 20 mg', md:'1 tab en la noche — colesterol'},
+               {mn:'Calcio + Vitamina D', md:'1 tab mediodía — osteoporosis'},
+               {mn:'Omega 3 1000 mg', md:'1 cápsula con alimentos'},
+               {mn:'Sertralina 25 mg', md:'1 tab mañana — ánimo'},
+             ],
+             hora:'10:20 AM', guardado:true},
+          ]
+        },
+        {
+          id:'campos', nombre:'Dra. Campos Ruiz', esp:'Cardiología',
+          ini:'CR', color:'#DC2626',
+          ultimo:'Holter 24hrs — sin arritmias significativas', fecha:'2025-06-10',
+          visitas:[
+            {id:'se2', sistema:'10 junio 2025 — Control'},
+            {id:'ve3', lado:'yo', tipo:'resultado', tagLabel:'📊 Holter 24 horas',
+             cuerpo:'Monitoreo de ritmo cardíaco.',
+             ia:'Sin arritmias significativas. 3 episodios de taquicardia sinusal relacionados con esfuerzo (subir escaleras). Frecuencia media 72 lpm. No requiere tratamiento adicional.',
+             hora:'11:30 AM', guardado:true},
+          ]
+        },
       ]
     },
+
     {
-      id: 'herrera', nombre: 'Dr. Herrera Campos', esp: 'Médico general',
-      ini: 'HC', color: '#059669',
-      ultimo: 'Chequeo anual completo — todo en orden', fecha: '12 feb 2025',
-      visitas: [
-        { id:'s7', sistema: '15 enero 2022' },
-        { id:'v12', lado:'yo', tag:'nota', tagLabel:'📝 Médico de cabecera desde 2022',
-          cuerpo: 'Primera consulta. Chequeo general por cambio de médico (me lo recomendó mi cuñado). Peso 86 kg, talla 1.74 m, IMC 28.4 (sobrepeso leve). Presión 146/94 — me refirió con cardiólogo.',
-          hora: '10:30 AM' },
-        { id:'s8', sistema: '10 marzo 2023' },
-        { id:'v13', lado:'yo', tag:'doc', tagLabel:'📄 Biometría hemática + química',
-          cuerpo: 'Exámenes de sangre de rutina anuales.',
-          ia: 'Hemoglobina 15.2 g/dL ✓  |  Leucocitos 6,800/μL (normal)  |  Plaquetas 210,000 ✓\nGlucosa 102 mg/dL (prediabetes borderline — vigilar)  |  Ácido úrico 6.8 mg/dL (límite normal)\nHemoglobina glucosilada A1c: 5.6% (normal, <5.7%)\n\nRecomendación: reducir azúcares simples, mantener actividad física.',
-          hora: '9:15 AM', alerta: '⚠️ Glucosa en límite — monitorear anualmente' },
-        { id:'s9', sistema: '12 febrero 2025' },
-        { id:'v14', lado:'yo', tag:'doc', tagLabel:'📄 Chequeo anual 2025',
-          cuerpo: 'Revisión completa + actualización de vacunas.',
-          ia: 'Peso 84 kg (-2 kg) ✓  |  Presión 126/82 ✓  |  Glucosa 96 mg/dL ✓  |  IMC 27.8\nVacunas al día: influenza reciente, tétanos vigente hasta 2028, pendiente hepatitis B (3ra dosis).\n\nEstado general: excelente para 58 años. El Dr. Herrera comentó que los indicadores mejoraron respecto al año anterior.',
-          hora: '10:50 AM' },
-        { id:'v15', lado:'yo', tag:'nota', tagLabel:'📝 Nota',
-          cuerpo: 'Me recordó que debo hacerme colonoscopía de rutina antes de los 60. Lo tengo pendiente para este año.',
-          hora: '11:05 AM' },
+      id:'sofia', nombre:'Sofía Aguilar Mora', edad:35, relacion:'Hija',
+      sangre:'O+', alergias:'Sulfonamidas', meds:0,
+      color:'#7C3AED', ini:'SA',
+      medicos:[
+        {
+          id:'leon', nombre:'Dra. León Vargas', esp:'Ginecología',
+          ini:'LV', color:'#DB2777',
+          ultimo:'Papanicolaou normal — revisión anual', fecha:'2025-03-15',
+          visitas:[
+            {id:'ss1', sistema:'15 marzo 2025 — Revisión anual'},
+            {id:'vs1', lado:'yo', tipo:'resultado', tagLabel:'📊 Revisión ginecológica',
+             cuerpo:'Chequeo anual completo.',
+             ia:'Papanicolaou: negativo para células malignas ✓\nColposcopia: cervix sin lesiones\nUS pélvico: útero y anexos normales\nMamografía: BIRADS 1 (normal para la edad)',
+             labs:[
+               {val:'Papanicolaou', estado:'ok', ref:'negativo ✓'},
+               {val:'Mamografía BIRADS 1', estado:'ok', ref:'normal'},
+             ],
+             hora:'10:30 AM', guardado:true},
+            {id:'vs2', lado:'yo', tipo:'cita', tagLabel:'📅 Próxima revisión',
+             cita:{fecha:'Marzo 2026', lugar:'Consultorio Dra. León', motivo:'Revisión anual'},
+             cuerpo:'Anual.',
+             hora:'10:45 AM', guardado:true},
+          ]
+        },
+        {
+          id:'torres', nombre:'Dr. Torres Medina', esp:'Medicina del deporte',
+          ini:'TM', color:'#059669',
+          ultimo:'Evaluación triatlón — apta', fecha:'2025-01-20',
+          visitas:[
+            {id:'ss2', sistema:'20 enero 2025 — Evaluación pre-competencia'},
+            {id:'vs3', lado:'yo', tipo:'resultado', tagLabel:'📊 Evaluación deportiva',
+             cuerpo:'Evaluación para triatlón distancia olímpica.',
+             ia:'VO2 max: 48 ml/kg/min (excelente para mujer 35 años) | FC máxima: 188 lpm | ECG esfuerzo: sin alteraciones | Composición corporal: 22% grasa (óptimo deportista)',
+             labs:[
+               {val:'VO2 max 48 ml/kg/min', estado:'ok', ref:'excelente (>47 mujeres)'},
+               {val:'ECG esfuerzo', estado:'ok', ref:'sin alteraciones'},
+             ],
+             hora:'9:00 AM', guardado:true},
+          ]
+        },
       ]
     },
+
     {
-      id: 'rios', nombre: 'Dra. Ríos Hernández', esp: 'Dermatología Oncológica',
-      ini: 'RH', color: '#DB2777',
-      ultimo: 'Sin lesiones sospechosas — próxima revisión abril 2025', fecha: '10 abr 2024',
-      visitas: [
-        { id:'s10', sistema: '8 septiembre 2023' },
-        { id:'v16', lado:'yo', tag:'nota', tagLabel:'📝 Primera revisión de lunares',
-          cuerpo: 'Me refirió el Dr. Herrera por antecedente familiar: abuelo paterno tuvo melanoma a los 72 años. La dermatóloga hizo mapeo corporal completo con dermoscopio.',
-          hora: '3:00 PM' },
-        { id:'v17', lado:'yo', tag:'doc', tagLabel:'📄 Reporte dermoscopía 2023',
-          cuerpo: 'Informe de revisión de 18 lunares mapeados.',
-          ia: '18 lesiones nevoides evaluadas. Criterios ABCDE aplicados a cada una.\n• 15 lunares: benignos, sin cambios requeridos\n• 2 lunares: vigilancia anual (zona lumbar derecha y antebrazo izquierdo)\n• 1 lunar: extirpación preventiva recomendada (hombro derecho, 7mm, bordes irregulares)\n\nProcedimiento: extirpación programada para la siguiente semana. Resultado histológico: nevus displásico de bajo grado — márgenes libres.',
-          hora: '3:45 PM', alerta: '⚠️ Revisión anual obligatoria — no omitir' },
-        { id:'s11', sistema: '10 abril 2024' },
-        { id:'v18', lado:'yo', tag:'doc', tagLabel:'📄 Control anual 2024',
-          cuerpo: 'Segunda revisión — seguimiento de los 2 lunares en vigilancia.',
-          ia: '17 lunares revisados (1 extirpado en 2023). Sin cambios en los 2 lunares en vigilancia. Cicatriz de extirpación: correctamente cerrada, sin signos de recidiva.\n\nNueva detección: 3 lunares nuevos en zona lumbar por exposición solar — añadidos al mapa. Recomendación: protector solar SPF 50+ diario en cara y cuello.',
-          hora: '4:10 PM' },
-        { id:'v19', lado:'yo', tag:'nota', tagLabel:'📝 Nota',
-          cuerpo: 'Me encargó no exponerme al sol entre 11am y 3pm. También me dijo que el tipo de piel que tengo (Fitzpatrick III) tiene riesgo moderado.',
-          hora: '4:25 PM' },
-      ]
-    },
-    {
-      id: 'reyes', nombre: 'Dra. Reyes Montoya', esp: 'Oftalmología',
-      ini: 'RM', color: '#0369A1',
-      ultimo: 'Presbicia + astigmatismo leve — nueva graduación', fecha: '5 mar 2025',
-      visitas: [
-        { id:'s12', sistema: '20 noviembre 2023' },
-        { id:'v20', lado:'yo', tag:'nota', tagLabel:'📝 Primera consulta',
-          cuerpo: 'Consulta por dificultad para leer de cerca. Diagnóstico: presbicia (+1.75) más astigmatismo leve en ojo derecho (-0.50 a 80°). Me recetó lentes progresivos.',
-          hora: '11:00 AM' },
-        { id:'v21', lado:'yo', tag:'doc', tagLabel:'📄 Receta de lentes 2023',
-          cuerpo: 'Prescripción para lentes oftálmicos.',
-          ia: 'OD: esfera +1.75, cilindro -0.50, eje 80°\nOI: esfera +1.50, cilindro plano\nAdición para cerca: +2.00\nTipo de lente: progresivos antirreflejantes\nLaboratorio sugerido: Óptica Devlyn o similar',
-          hora: '11:30 AM' },
-        { id:'s13', sistema: '5 marzo 2025' },
-        { id:'v22', lado:'yo', tag:'doc', tagLabel:'📄 Control + nueva graduación',
-          cuerpo: 'Revisión anual. Notaba que me costaba más ver de lejos también.',
-          ia: 'Agudeza visual sin corrección: 20/50 OD, 20/40 OI.\nNueva prescripción:\nOD: esfera +2.00, cilindro -0.75, eje 82°\nOI: esfera +1.75, cilindro -0.25, eje 95°\nAdición: +2.25\n\nPresión intraocular: 14 mmHg OD / 13 mmHg OI (normal, sin riesgo de glaucoma).\nFondo de ojo: sin alteraciones. Próxima revisión en 1 año.',
-          hora: '10:20 AM' },
-      ]
-    },
-    {
-      id: 'soto', nombre: 'Dr. Soto Villanueva', esp: 'Ortopedia',
-      ini: 'SV', color: '#B45309',
-      ultimo: 'Tendinitis rotuliana — fisioterapia completada', fecha: '22 jun 2024',
-      visitas: [
-        { id:'s14', sistema: '3 abril 2024' },
-        { id:'v23', lado:'yo', tag:'nota', tagLabel:'📝 Urgencia — rodilla derecha',
-          cuerpo: 'Fui de urgencia por dolor agudo en rodilla derecha después de partido de pádel. Inflamación visible. Diagnóstico inicial: probable lesión meniscal vs. tendinitis. Ordenó rayos X y resonancia.',
-          hora: '6:30 PM' },
-        { id:'v24', lado:'yo', tag:'doc', tagLabel:'📄 Rayos X + RMN rodilla',
-          cuerpo: 'Estudios realizados en Hospital Ángeles.',
-          ia: 'Rayos X: sin fracturas ni lesiones óseas visibles. Espacio articular conservado.\nRMN: tendinitis del tendón rotuliano grado II. Sin lesión meniscal. Sin daño ligamentario.\n\nPlan de tratamiento:\n• Reposo deportivo 4 semanas\n• Diclofenaco 100 mg SR una vez al día (10 días)\n• Fisioterapia 3x/semana × 6 semanas\n• Hielo local 20 min 3x/día primera semana',
-          meds: [{ nm: 'Diclofenaco 100 mg SR', dt: '1 tableta diaria con alimentos — solo 10 días' }],
-          hora: '8:15 PM' },
-        { id:'s15', sistema: '22 junio 2024' },
-        { id:'v25', lado:'yo', tag:'nota', tagLabel:'📝 Alta médica',
-          cuerpo: 'Completé 6 semanas de fisio (18 sesiones en Physio+ Polanco). Rodilla al 95%. El doctor dijo que puedo volver al pádel pero usar rodillera las primeras 4 semanas y evitar partidos de más de 90 min.',
-          hora: '10:40 AM' },
+      id:'pablo', nombre:'Pablo Aguilar Mora', edad:8, relacion:'Nieto',
+      sangre:'B+', alergias:'Polen (estacional)', meds:0,
+      color:'#0369A1', ini:'PA',
+      medicos:[
+        {
+          id:'garcia_ped', nombre:'Dra. García Nava', esp:'Pediatría',
+          ini:'GN', color:'#059669',
+          ultimo:'Cartilla actualizada — peso y talla normales', fecha:'2025-07-28',
+          visitas:[
+            {id:'sp1', sistema:'28 julio 2025 — Control de 8 años'},
+            {id:'vp1', lado:'yo', tipo:'resultado', tagLabel:'📊 Control pediátrico',
+             cuerpo:'Revisión anual + cartilla de vacunación.',
+             ia:'Peso: 26 kg (percentil 50 ✓) | Talla: 128 cm (percentil 55 ✓) | Visión 20/20 | Sin problemas detectados.',
+             labs:[
+               {val:'Peso 26 kg', estado:'ok', ref:'percentil 50'},
+               {val:'Talla 128 cm', estado:'ok', ref:'percentil 55'},
+             ],
+             hora:'10:00 AM', guardado:true},
+            {id:'vp2', lado:'yo', tipo:'receta', tagLabel:'💊 Vacunas aplicadas',
+             cuerpo:'Vacunas del esquema de 8 años.',
+             meds:[
+               {mn:'DPT (refuerzo)', md:'Aplicada brazo derecho — 0.5 ml IM'},
+               {mn:'Influenza estacional', md:'Aplicada brazo izquierdo — anual'},
+             ],
+             hora:'10:20 AM', guardado:true},
+          ]
+        },
       ]
     },
   ]
 };
 
-// ─── ESTADO ───────────────────────────────────────────────
-let medicoActual = null;
-
-// ─── RENDER HELPER ────────────────────────────────────────
+// ─── HELPERS ──────────────────────────────────────────────
 const phone = document.getElementById('phone');
-let _pantallaActual = 'lista';
-function render(html, animacion = 'none') {
+
+function render(html, dir = 'none') {
   const c = document.createElement('div');
   c.style.cssText = 'display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden';
   c.innerHTML = html;
-  if (animacion === 'adelante') c.classList.add('slide-in');
+  if (dir === 'adelante') c.classList.add('slide-in');
+  if (dir === 'atras')    c.classList.add('slide-back');
   phone.innerHTML = '';
   phone.appendChild(c);
 }
 
-// ─── TIMESTAMPS RELATIVOS ESTILO WHATSAPP ─────────────────
-function tsRelativo(fechaStr) {
+function tsRel(fechaStr) {
   if (!fechaStr) return '';
-  const ahora = new Date();
-  const fecha = new Date(fechaStr);
-  const diffMs = ahora - fecha;
-  const diffDias = Math.floor(diffMs / 86400000);
-  if (diffDias === 0) return 'Hoy';
-  if (diffDias === 1) return 'Ayer';
-  if (diffDias < 7)  return fecha.toLocaleDateString('es-MX', {weekday:'short'});
-  if (diffDias < 365) return fecha.toLocaleDateString('es-MX', {day:'numeric', month:'short'});
-  return fecha.toLocaleDateString('es-MX', {day:'numeric', month:'short', year:'numeric'});
+  const ahora = new Date(), f = new Date(fechaStr);
+  const d = Math.floor((ahora - f) / 86400000);
+  if (d === 0) return 'Hoy';
+  if (d === 1) return 'Ayer';
+  if (d < 7)   return f.toLocaleDateString('es-MX',{weekday:'short'});
+  if (d < 365) return f.toLocaleDateString('es-MX',{day:'numeric',month:'short'});
+  return f.toLocaleDateString('es-MX',{day:'numeric',month:'short',year:'numeric'});
 }
 
-function tsHora(fechaStr) {
-  if (!fechaStr) return '';
-  return new Date(fechaStr).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit'});
-}
+const COLORES_ESP = {
+  'Dermatología':'#7C3AED','Dermatología Oncológica':'#7C3AED',
+  'Cardiología':'#DC2626','Ginecología':'#DB2777','Neurología':'#1D4ED8',
+  'Ortopedia':'#B45309','Oftalmología':'#0369A1','Psiquiatría':'#4F46E5',
+  'Endocrinología':'#D97706','Gastroenterología':'#059669',
+  'Geriatría':'#059669','Pediatría':'#0369A1','Medicina del deporte':'#059669',
+  'default':'#64748B'
+};
+function colorEsp(e){ return COLORES_ESP[e] || COLORES_ESP.default; }
+function iniciales(n){ return n.split(' ').slice(0,2).map(p=>p[0]).join('').toUpperCase(); }
 
-// Convierte "10 feb 2025" o ISO a Date para comparar
-function parseFecha(str) {
-  if (!str) return new Date(0);
-  if (str.includes('-') && str.length >= 8) return new Date(str);
-  // Formato "10 feb 2025" → parsear manualmente
-  const meses = {ene:0,feb:1,mar:2,abr:3,may:4,jun:5,jul:6,ago:7,sep:8,oct:9,nov:10,dic:11};
-  const p = str.trim().toLowerCase().split(' ');
-  if (p.length === 3) return new Date(+p[2], meses[p[1]] ?? 0, +p[0]);
-  return new Date(0);
-}
+// ─── PANTALLA 0: EXPEDIENTES ──────────────────────────────
+function pantallaExpedientes(filtro='') {
+  const lista = filtro
+    ? APP.expedientes.filter(e=>e.nombre.toLowerCase().includes(filtro.toLowerCase()))
+    : APP.expedientes;
 
-// ─── PANTALLA 1: LISTA DE MÉDICOS ─────────────────────────
-function pantallaLista(filtro = '') {
-  // Ordenar por fecha más reciente primero
-  const medicos = [...D.medicos].sort((a, b) =>
-    parseFecha(b.fecha) - parseFecha(a.fecha)
-  );
-  const visible = filtro
-    ? medicos.filter(m =>
-        m.nombre.toLowerCase().includes(filtro.toLowerCase()) ||
-        m.esp.toLowerCase().includes(filtro.toLowerCase()))
-    : medicos;
-
-  const rows = visible.map(m => {
-    const nEvs = m.visitas.filter(v => !v.sistema).length;
-    const ts = tsRelativo(parseFecha(m.fecha).toISOString());
+  const rows = lista.map(e => {
+    const nMeds = e.medicos.length;
+    const nEvs  = e.medicos.reduce((s,m)=>s+m.visitas.filter(v=>!v.sistema).length,0);
+    const ult   = e.medicos.reduce((lat,m)=>m.fecha>lat?m.fecha:lat,'');
     return `
-    <button class="chat-row" onclick="pantallaChat('${m.id}')">
-      <div class="avatar" style="width:48px;height:48px;background:${m.color};font-size:15px">${m.ini}</div>
+    <button class="chat-row" onclick="abrirExpediente('${e.id}')">
+      <div class="av" style="width:50px;height:50px;background:${e.color};font-size:16px">${e.ini}</div>
       <div class="meta">
-        <p class="n">${m.nombre}</p>
-        <p class="esp">${m.esp}</p>
-        <p class="l">${m.ultimo}</p>
+        <p class="n">${e.nombre}</p>
+        <p class="sub">${e.relacion} · ${e.edad} años · Sangre ${e.sangre}</p>
+        <p class="prev">⚠️ ${e.alergias} · 💊 ${e.meds} meds activos</p>
       </div>
       <div class="right">
-        <span class="date">${ts}</span>
-        ${nEvs > 0 ? `<span class="count-badge">${nEvs}</span>` : ''}
+        <span class="ts">${tsRel(ult)}</span>
+        <span class="badge">${nMeds}</span>
       </div>
     </button>`;
   }).join('');
 
-  const vacio = visible.length === 0 ? `
-    <div style="padding:40px 24px;text-align:center;color:var(--ink-faint)">
-      <div style="font-size:36px;margin-bottom:10px">🔍</div>
-      <div style="font-size:14px">Sin resultados para "<strong>${filtro}</strong>"</div>
-    </div>` : '';
+  const vacio = lista.length===0 ? `<div style="padding:40px;text-align:center;color:var(--ink-faint)">Sin resultados para "<strong>${filtro}</strong>"</div>` : '';
 
   render(`
     <div class="topbar">
-      <div class="topbar-brand">Luisa<span>.</span></div>
-      <div class="topbar-title" style="text-align:right">
-        <p class="t" style="color:white;font-size:13px">${D.paciente.nombre}</p>
-        <p class="s">${D.medicos.length} médicos · ${D.medicos.reduce((s,m)=>s+m.visitas.filter(v=>!v.sistema).length,0)} eventos</p>
+      <div class="brand">Luisa<span>.</span></div>
+      <div class="ttl" style="text-align:right">
+        <p class="t" style="font-size:13px">${usuarioActual ? usuarioActual.email.split('@')[0] : 'Demo'}</p>
+        <p class="s">${APP.expedientes.length} expedientes</p>
       </div>
-      ${usuarioActual ? `<button onclick="cerrarSesion()" style="background:none;border:none;color:rgba(255,255,255,0.55);font-size:18px;cursor:pointer;padding:0 0 0 8px" title="Cerrar sesión">⏻</button>` : ''}
+      ${usuarioActual?`<button class="ico-btn" onclick="cerrarSesion()" title="Salir">⏻</button>`:''}
     </div>
     <div class="screen">
       <div class="searchbar">
         <span style="color:var(--ink-faint)">🔍</span>
-        <input placeholder="Buscar médico o especialidad..." oninput="pantallaLista(this.value)" value="${filtro}" autocomplete="off" />
+        <input placeholder="Buscar persona..." oninput="pantallaExpedientes(this.value)" value="${filtro}" autocomplete="off"/>
+      </div>
+      <div class="scroll">
+        ${rows}${vacio}
+        <button class="add-row" onclick="agregarExpediente()">
+          <div class="add-circle">+</div>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--teal-deep)">Agregar expediente</div>
+            <div style="font-size:12px;color:var(--ink-faint)">Familiar, paciente o tú mismo</div>
+          </div>
+        </button>
+      </div>
+    </div>
+  `, 'atras');
+}
+
+function abrirExpediente(id) {
+  expedienteActual = APP.expedientes.find(e=>e.id===id);
+  if (!expedienteActual) return;
+  pantallaLista();
+}
+
+// ─── PANTALLA 1: MÉDICOS DEL EXPEDIENTE ───────────────────
+function pantallaLista(filtro='') {
+  if (!expedienteActual) { pantallaExpedientes(); return; }
+  const E = expedienteActual;
+
+  const medicos = [...E.medicos].sort((a,b)=>b.fecha.localeCompare(a.fecha));
+  const visible = filtro ? medicos.filter(m=>
+    m.nombre.toLowerCase().includes(filtro.toLowerCase()) ||
+    m.esp.toLowerCase().includes(filtro.toLowerCase())) : medicos;
+
+  const rows = visible.map(m => {
+    const nEvs = m.visitas.filter(v=>!v.sistema).length;
+    return `
+    <button class="chat-row" onclick="pantallaChat('${m.id}')">
+      <div class="av" style="width:48px;height:48px;background:${m.color};font-size:14px">${m.ini}</div>
+      <div class="meta">
+        <p class="n">${m.nombre}</p>
+        <p class="sub">${m.esp}</p>
+        <p class="prev">${m.ultimo}</p>
+      </div>
+      <div class="right">
+        <span class="ts">${tsRel(m.fecha)}</span>
+        ${nEvs>0?`<span class="badge">${nEvs}</span>`:''}
+      </div>
+    </button>`;
+  }).join('');
+
+  const vacio = visible.length===0 ? `<div style="padding:40px;text-align:center;color:var(--ink-faint)">Sin resultados</div>` : '';
+  const nEvsTot = E.medicos.reduce((s,m)=>s+m.visitas.filter(v=>!v.sistema).length,0);
+
+  render(`
+    <div class="topbar">
+      <button class="ico-btn" onclick="pantallaExpedientes()" style="font-size:22px;margin-right:2px">‹</button>
+      <div class="av" style="width:36px;height:36px;background:${E.color};font-size:13px;flex-shrink:0">${E.ini}</div>
+      <div class="ttl">
+        <p class="t">${E.nombre}</p>
+        <p class="s">${E.relacion} · ${E.medicos.length} médicos · ${nEvsTot} eventos</p>
+      </div>
+    </div>
+    <div class="screen">
+      <div class="searchbar">
+        <span style="color:var(--ink-faint)">🔍</span>
+        <input placeholder="Buscar médico o especialidad..." oninput="pantallaLista(this.value)" value="${filtro}" autocomplete="off"/>
       </div>
       <div class="critico-bar">
-        <div class="critico-item">
-          <span>🩸</span>
-          <div><span class="critico-label">Sangre</span><span class="critico-val">${D.paciente.sangre}</span></div>
-        </div>
-        <div class="critico-item">
-          <span>⚠️</span>
-          <div><span class="critico-label">Alergia</span><span class="critico-val">${D.paciente.alergias}</span></div>
-        </div>
-        <div class="critico-item">
-          <span>💊</span>
-          <div><span class="critico-label">Meds</span><span class="critico-val">${D.paciente.meds} activos</span></div>
-        </div>
+        <div class="critico-item"><span>🩸</span><div><span class="cl">Sangre</span><span class="cv">${E.sangre}</span></div></div>
+        <div class="critico-item"><span>⚠️</span><div><span class="cl">Alergia</span><span class="cv">${E.alergias.split(' ')[0]}</span></div></div>
+        <div class="critico-item"><span>💊</span><div><span class="cl">Meds</span><span class="cv">${E.meds} activos</span></div></div>
       </div>
       <div class="scroll">
         ${rows}${vacio}
@@ -481,331 +604,340 @@ function pantallaLista(filtro = '') {
         </button>
       </div>
     </div>
-  `);
+  `, 'adelante');
 }
 
-// ─── PANTALLA 2: CONVERSACIÓN CON MÉDICO ──────────────────
+// ─── PANTALLA 2: HILO DE CONSULTAS ────────────────────────
 function pantallaChat(medicoId) {
-  medicoActual = D.medicos.find(m => m.id === medicoId);
+  if (!expedienteActual) return;
+  medicoActual = expedienteActual.medicos.find(m=>m.id===medicoId);
   if (!medicoActual) return;
 
-  const nEvs = medicoActual.visitas.filter(v => !v.sistema).length;
-  const subtitulo = nEvs === 0
-    ? 'Sin consultas — toca 📷 para empezar'
-    : `${medicoActual.esp} · ${nEvs} evento${nEvs !== 1 ? 's' : ''}`;
+  const nEvs = medicoActual.visitas.filter(v=>!v.sistema).length;
+  const sub   = nEvs===0 ? 'Sin consultas — toca 📷 para empezar' : `${medicoActual.esp} · ${nEvs} evento${nEvs!==1?'s':''}`;
 
-  const mensajes = medicoActual.visitas.map(v => {
-    if (v.sistema) return `<div class="msg-system">${v.sistema}</div>`;
+  const mensajes = medicoActual.visitas.map(renderMensaje).join('');
 
-    let iaHTML = '';
-    if (v.ia) {
-      const lineas = v.ia.split('\n').map(l => l.trim()).filter(Boolean);
-      const iaTexto = lineas.map(l => `<div style="margin-bottom:2px">${l}</div>`).join('');
-      iaHTML = `<div style="margin-top:8px;padding:8px 10px;background:rgba(0,201,167,0.08);border-left:3px solid var(--teal);border-radius:0 6px 6px 0;font-size:12.5px;color:#007A66;line-height:1.5">✦ ${iaTexto}</div>`;
-    }
-    let medsHTML = '';
-    if (v.meds) {
-      medsHTML = v.meds.map(md => `
-        <div class="med-card">
-          <p class="nm">💊 ${md.nm}</p>
-          <p class="dt">${md.dt}</p>
-        </div>`).join('');
-    }
-    let alertaHTML = '';
-    if (v.alerta) {
-      alertaHTML = `<div style="margin-top:6px;font-size:11.5px;color:#B45309;background:#FEF3C7;border-radius:6px;padding:5px 8px">${v.alerta}</div>`;
-    }
-    // ✓✓ para los que ya están en DB (los demo siempre lo tienen, los nuevos después del save)
-    const guardado = v.guardado !== false
-      ? `<span style="color:var(--teal);font-size:11px;margin-left:4px">✓✓</span>` : '';
-
-    const claseMsg = v.lado === 'yo' ? 'msg-yo' : 'msg-luisa';
-    return `
-      <div class="${claseMsg}">
-        <div class="msg-tag ${v.tag}">${v.tagLabel}</div>
-        <div class="msg-body">${v.cuerpo}</div>
-        ${iaHTML}
-        ${medsHTML}
-        ${alertaHTML}
-        ${v.ia ? '<span class="chip-ia">✓ Organizado por Luisa</span>' : ''}
-        <div class="msg-time">${v.hora}${guardado}</div>
-      </div>`;
-  }).join('');
-
-  const vacioCTA = nEvs === 0 ? `
+  const vacioCTA = nEvs===0 ? `
     <div style="padding:32px 20px;text-align:center">
-      <div style="font-size:44px;margin-bottom:12px">📋</div>
-      <p style="margin:0 0 6px;font-size:15px;font-weight:700;color:var(--ink)">Primera consulta con ${medicoActual.nombre.split(' ')[1] || medicoActual.nombre}</p>
-      <p style="margin:0;font-size:13px;color:var(--ink-soft);line-height:1.6">Toca 📷 abajo para fotografiar<br>la receta o documento que te dio.</p>
+      <div style="font-size:44px;margin-bottom:10px">📋</div>
+      <p style="font-size:15px;font-weight:700;color:var(--ink);margin-bottom:6px">Primera consulta con ${medicoActual.nombre.split(' ')[1]||medicoActual.nombre}</p>
+      <p style="font-size:13px;color:var(--ink-soft);line-height:1.6">Toca 📷 para fotografiar la receta<br>o documento que te dieron.</p>
     </div>` : '';
 
   render(`
     <div class="topbar">
-      <button class="back" onclick="pantallaLista()" style="font-size:22px">‹</button>
-      <div class="avatar" style="width:40px;height:40px;background:${medicoActual.color};font-size:14px;flex-shrink:0">${medicoActual.ini}</div>
-      <div class="topbar-title">
+      <button class="ico-btn" onclick="pantallaLista()" style="font-size:24px">‹</button>
+      <div class="av" style="width:38px;height:38px;background:${medicoActual.color};font-size:13px;flex-shrink:0">${medicoActual.ini}</div>
+      <div class="ttl">
         <p class="t">${medicoActual.nombre}</p>
-        <p class="s">${subtitulo}</p>
+        <p class="s">${sub}</p>
       </div>
-      <button onclick="abrirSheet()" style="background:none;border:none;color:rgba(255,255,255,0.7);font-size:22px;cursor:pointer;padding:0">⋮</button>
+      <button class="ico-btn" onclick="abrirSheet()" style="font-size:22px">⋮</button>
     </div>
     <div class="screen">
       <div class="scroll" id="thread-scroll">
         <div class="thread">${vacioCTA}${mensajes}</div>
       </div>
       <div class="composer">
-        <label class="composer-btn" for="input-foto" style="cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px">📷</label>
-        <input placeholder="Nota rápida..." id="input-nota-rapida"
-          onkeydown="if(event.key==='Enter'&&this.value.trim())enviarNotaRapida()"
-          style="flex:1;border:1px solid var(--line);border-radius:22px;padding:10px 16px;font-size:14px;background:var(--bg);color:var(--ink);outline:none" />
-        <button onclick="nuevaConsultaHoy()"
-          style="background:none;border:1px solid var(--line);border-radius:20px;padding:7px 12px;font-size:12px;font-weight:600;color:var(--navy);cursor:pointer;white-space:nowrap">
-          + Consulta
-        </button>
+        <label class="cam-btn" for="input-foto" style="cursor:pointer">📷</label>
+        <input class="composer-input" placeholder="Nota rápida..." id="inp-nota"
+          onkeydown="if(event.key==='Enter'&&this.value.trim())enviarNota()"/>
+        <button class="consulta-btn" onclick="nuevaConsulta()">+ Consulta</button>
       </div>
     </div>
     <div id="sheet-overlay" class="sheet-overlay hidden" onclick="cerrarSheet(event)">
       <div class="sheet" onclick="event.stopPropagation()">
         <div class="sheet-handle"></div>
-        <div class="sheet-title">Agregar a ${medicoActual.nombre.split(' ')[0]} ${medicoActual.nombre.split(' ')[1] || ''}</div>
-        <button class="sheet-option" onclick="agregarFoto()">
+        <div class="sheet-title">Agregar a ${medicoActual.nombre.split(' ')[0]} ${medicoActual.nombre.split(' ')[1]||''}</div>
+        <button class="sheet-opt" onclick="agregarFoto()">
           <span class="ico">📷</span>
           <div><div class="lbl">Foto de documento</div><div class="sub">Receta, análisis, estudio, indicación...</div></div>
         </button>
-        <button class="sheet-option" onclick="agregarNota()">
+        <button class="sheet-opt" onclick="agregarNota()">
           <span class="ico">📝</span>
-          <div><div class="lbl">Nota de la consulta</div><div class="sub">Lo que pasó, síntomas, indicaciones verbales</div></div>
+          <div><div class="lbl">Nota de la consulta</div><div class="sub">Lo que el médico dijo, síntomas, comentarios</div></div>
         </button>
-        <button class="sheet-option" onclick="nuevaConsultaHoy();cerrarSheet()">
+        <button class="sheet-opt" onclick="nuevaConsulta();cerrarSheet()">
           <span class="ico">📅</span>
-          <div><div class="lbl">Nueva consulta hoy</div><div class="sub">Inserta separador con la fecha de hoy</div></div>
+          <div><div class="lbl">Nueva consulta hoy</div><div class="sub">Inserta separador de fecha para esta visita</div></div>
         </button>
         <button class="btn-cancel" onclick="cerrarSheet()">Cancelar</button>
       </div>
     </div>
     <input type="file" id="input-foto" accept="image/*" capture="environment" style="display:none" onchange="procesarFoto(event)"/>
-  `);
+  `, 'adelante');
 
-  // Scroll al fondo
-  setTimeout(() => {
-    const el = document.getElementById('thread-scroll');
-    if (el) el.scrollTop = el.scrollHeight;
-  }, 60);
+  setTimeout(()=>{ const el=document.getElementById('thread-scroll'); if(el) el.scrollTop=el.scrollHeight; }, 60);
 }
 
-function abrirSheet() {
-  const el = document.getElementById('sheet-overlay');
-  if (el) el.classList.remove('hidden');
-}
-function cerrarSheet(e) {
-  if (!e || e.target === document.getElementById('sheet-overlay')) {
-    const el = document.getElementById('sheet-overlay');
-    if (el) el.classList.add('hidden');
+// ─── RENDER DE MENSAJE ────────────────────────────────────
+function renderMensaje(v) {
+  if (v.sistema) return `<div class="msg-sys">${v.sistema}</div>`;
+
+  const tick = v.guardado ? '<span class="tick">✓✓</span>' : '';
+
+  // Bloque IA
+  let iaHTML = '';
+  if (v.ia) {
+    const lineas = v.ia.split('\n').map(l=>l.trim()).filter(Boolean);
+    iaHTML = `<div class="ia-block">✦ ${lineas.map(l=>`<div>${l}</div>`).join('')}</div>`;
   }
+
+  // Medicamentos
+  let medsHTML = '';
+  if (v.meds && v.meds.length) {
+    medsHTML = v.meds.map(m=>`<div class="med-card"><p class="mn">💊 ${m.mn}</p><p class="md">${m.md}</p></div>`).join('');
+  }
+
+  // Resultados de lab
+  let labsHTML = '';
+  if (v.labs && v.labs.length) {
+    labsHTML = v.labs.map(l=>{
+      const cls = l.estado==='ok'?'ok':l.estado==='warn'?'warn':'bad';
+      const ico = l.estado==='ok'?'✓':l.estado==='warn'?'⚠':'✗';
+      return `<div class="lab-card"><p class="lv"><span class="${cls}">${ico}</span> ${l.val} <span style="color:var(--ink-faint);font-size:11px">· ${l.ref}</span></p></div>`;
+    }).join('');
+  }
+
+  // Estudios ordenados
+  let estudiosHTML = '';
+  if (v.estudios && v.estudios.length) {
+    estudiosHTML = `<div style="margin-top:8px;background:#EFF6FF;border-radius:8px;padding:8px 10px">`
+      + v.estudios.map(e=>`<div style="font-size:12.5px;color:#1D4ED8;padding:2px 0">🔬 ${e}</div>`).join('')
+      + `</div>`;
+  }
+
+  // Próxima cita
+  let citaHTML = '';
+  if (v.cita) {
+    citaHTML = `<div class="cita-card">📅 <div><div class="fecha">${v.cita.fecha}</div><div style="font-size:12px;color:var(--ink-soft)">${v.cita.lugar||''} · ${v.cita.motivo||''}</div></div></div>`;
+  }
+
+  // Alerta
+  let alertaHTML = '';
+  if (v.alerta) alertaHTML = `<div class="alerta">${v.alerta}</div>`;
+
+  // Chip IA
+  const chipIA = (v.ia||v.labs) ? '<span class="chip-ia">✓ Organizado por Luisa</span>' : '';
+
+  const tagClass = `tag-${v.tipo||'nota'}`;
+  const claseMsg = v.lado==='yo' ? 'msg-yo' : 'msg-luisa';
+
+  return `
+    <div class="${claseMsg}">
+      <div class="msg-tag ${tagClass}">${v.tagLabel||''}</div>
+      <div class="msg-body">${v.cuerpo||''}</div>
+      ${medsHTML}${labsHTML}${estudiosHTML}${citaHTML}${iaHTML}${alertaHTML}
+      ${chipIA}
+      <div class="msg-time">${v.hora||''}${tick}</div>
+    </div>`;
 }
 
-function agregarFoto() {
+// ─── ACCIONES EN HILO ─────────────────────────────────────
+function nuevaConsulta() {
+  const hoy = new Date().toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'});
+  medicoActual.visitas.push({id:'sys_'+Date.now(), sistema: hoy+' — Nueva consulta'});
+  pantallaChat(medicoActual.id);
+}
+
+function abrirSheet() { document.getElementById('sheet-overlay')?.classList.remove('hidden'); }
+function cerrarSheet(e) {
+  if (!e||e.target===document.getElementById('sheet-overlay'))
+    document.getElementById('sheet-overlay')?.classList.add('hidden');
+}
+
+function agregarFoto() { cerrarSheet(); document.getElementById('input-foto')?.click(); }
+function agregarNota() {
   cerrarSheet();
-  const inp = document.getElementById('input-foto');
-  if (inp) inp.click();
+  const t = prompt('¿Qué quieres anotar?');
+  if (t && t.trim()) _pushNota(t.trim());
+}
+function enviarNota() {
+  const inp = document.getElementById('inp-nota');
+  if (!inp||!inp.value.trim()) return;
+  _pushNota(inp.value.trim()); inp.value='';
+}
+
+async function _pushNota(texto) {
+  const hora = new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+  const nueva = {id:'v'+Date.now(),lado:'yo',tipo:'nota',tagLabel:'📝 Nota',cuerpo:texto,hora,guardado:false};
+  medicoActual.visitas.push(nueva);
+  pantallaChat(medicoActual.id);
+  if (usuarioActual) {
+    const {error} = await db.from('eventos_salud').insert({
+      perfil_id:usuarioActual.id,
+      medico_nombre:medicoActual.nombre, especialidad_medico:medicoActual.esp,
+      titulo:'Nota', descripcion:texto, tipo_documento:'nota'
+    });
+    if (!error) { nueva.guardado=true; pantallaChat(medicoActual.id); }
+  } else { nueva.guardado=true; }
 }
 
 async function procesarFoto(event) {
   const file = event.target.files[0];
-  if (!file || !medicoActual) return;
-  event.target.value = '';
-
-  const hora = new Date().toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit'});
-  const nueva = {
-    id: 'v' + Date.now(), lado: 'yo', tag: 'doc', tagLabel: '📄 Documento subido',
-    cuerpo: 'Luisa está leyendo tu documento...', hora
-  };
+  if (!file||!medicoActual) return;
+  event.target.value='';
+  const hora = new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+  const nueva = {id:'v'+Date.now(),lado:'yo',tipo:'doc',tagLabel:'📄 Documento',cuerpo:'Luisa está leyendo tu documento...',hora,guardado:false};
   medicoActual.visitas.push(nueva);
   pantallaChat(medicoActual.id);
-
   try {
-    let fotoUrl;
+    let url;
     if (usuarioActual) {
-      fotoUrl = await subirFotoReal(file, usuarioActual.id);
-    } else {
-      fotoUrl = URL.createObjectURL(file);
-    }
-
-    const ia = await llamarIA(fotoUrl);
-    nueva.cuerpo = ia?.titulo || 'Documento guardado.';
-    nueva.ia = ia?.resumen || ia?.diagnostico || 'Analizado por Luisa.';
-
+      const ext = file.name.split('.').pop();
+      const path = `${usuarioActual.id}/${Date.now()}.${ext}`;
+      await db.storage.from('luisa-fotos').upload(path, file);
+      const {data:{publicUrl}} = db.storage.from('luisa-fotos').getPublicUrl(path);
+      url = publicUrl;
+    } else { url = URL.createObjectURL(file); }
+    const res = await fetch('/.netlify/functions/procesar-documento',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({foto_url:url})});
+    const ia = res.ok ? await res.json() : null;
+    nueva.cuerpo = ia?.titulo||'Documento guardado.';
+    nueva.ia     = ia?.resumen||ia?.diagnostico||null;
+    nueva.tagLabel = ia?.tipo_documento==='receta'?'💊 Receta':ia?.tipo_documento==='laboratorio'?'📊 Resultado':'📄 Documento';
     if (usuarioActual) {
       await db.from('eventos_salud').insert({
-        perfil_id: usuarioActual.id,
-        medico_nombre: medicoActual.nombre,
-        especialidad_medico: medicoActual.esp,
-        titulo: nueva.cuerpo,
-        resumen_ia: nueva.ia,
-        foto_url: fotoUrl,
-        tipo_documento: ia?.tipo_documento || 'documento'
+        perfil_id:usuarioActual.id, medico_nombre:medicoActual.nombre, especialidad_medico:medicoActual.esp,
+        titulo:nueva.cuerpo, resumen_ia:nueva.ia, foto_url:url, tipo_documento:ia?.tipo_documento||'documento'
       });
-    }
-  } catch(e) {
-    nueva.cuerpo = 'Error al procesar. Intenta de nuevo.';
-    nueva.ia = null;
-  }
-
+      nueva.guardado=true;
+    } else { nueva.guardado=true; }
+  } catch(e) { nueva.cuerpo='Error al procesar. Intenta de nuevo.'; }
   pantallaChat(medicoActual.id);
 }
 
-function agregarNota() {
-  cerrarSheet();
-  const texto = prompt('¿Qué quieres anotar sobre esta consulta?');
-  if (!texto || !medicoActual) return;
-  _pushNota(texto);
+// ─── AGREGAR EXPEDIENTE ───────────────────────────────────
+function agregarExpediente() {
+  render(`
+    <div class="topbar">
+      <button class="ico-btn" onclick="pantallaExpedientes()" style="font-size:22px">‹</button>
+      <div class="ttl"><p class="t">Nuevo expediente</p><p class="s">Tú, familiar o paciente</p></div>
+    </div>
+    <div class="screen scroll section-pad" style="gap:8px">
+      <p style="font-size:13px;color:var(--ink-soft);margin-bottom:8px">¿Para quién es este expediente?</p>
+      <label class="form-label">Nombre completo</label>
+      <input id="en-nombre" class="form-input" placeholder="ej. María López García"/>
+      <label class="form-label">Relación</label>
+      <select id="en-rel" class="form-select">
+        <option value="Yo">Yo mismo/a</option><option>Mamá</option><option>Papá</option>
+        <option>Hijo/a</option><option>Esposo/a</option><option>Nieto/a</option>
+        <option>Abuelo/a</option><option>Otro familiar</option><option>Paciente</option>
+      </select>
+      <label class="form-label">Edad</label>
+      <input id="en-edad" type="number" class="form-input" placeholder="ej. 58" min="0" max="120"/>
+      <label class="form-label">Tipo de sangre</label>
+      <select id="en-sangre" class="form-select">
+        <option value="">No sé / Por definir</option>
+        <option>O+</option><option>O-</option><option>A+</option><option>A-</option>
+        <option>B+</option><option>B-</option><option>AB+</option><option>AB-</option>
+      </select>
+      <label class="form-label">Alergias conocidas</label>
+      <input id="en-alergias" class="form-input" placeholder="ej. Penicilina, látex — o ninguna"/>
+      <button class="btn-primary" style="margin-top:8px" onclick="confirmarExpediente()">Crear expediente</button>
+    </div>
+  `,'adelante');
 }
 
-function enviarNotaRapida() {
-  const inp = document.getElementById('input-nota-rapida');
-  if (!inp || !inp.value.trim() || !medicoActual) return;
-  _pushNota(inp.value.trim());
-  inp.value = '';
-}
-
-async function _pushNota(texto) {
-  const hora = new Date().toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit'});
-  const nueva = {
-    id: 'v' + Date.now(), lado: 'yo', tag: 'nota', tagLabel: '📝 Nota',
-    cuerpo: texto, hora, guardado: false
+function confirmarExpediente() {
+  const nombre = document.getElementById('en-nombre')?.value?.trim();
+  if (!nombre) { alert('Escribe el nombre'); return; }
+  const colores = ['#1B3F72','#DC2626','#DB2777','#7C3AED','#059669','#B45309','#0369A1'];
+  const nuevo = {
+    id:'exp_'+Date.now(), nombre,
+    relacion: document.getElementById('en-rel')?.value||'',
+    edad: +document.getElementById('en-edad')?.value||0,
+    sangre: document.getElementById('en-sangre')?.value||'?',
+    alergias: document.getElementById('en-alergias')?.value?.trim()||'Ninguna conocida',
+    meds:0, ini:iniciales(nombre),
+    color: colores[APP.expedientes.length % colores.length],
+    medicos:[]
   };
-  medicoActual.visitas.push(nueva);
-  pantallaChat(medicoActual.id);
-
-  if (usuarioActual) {
-    const { error } = await db.from('eventos_salud').insert({
-      perfil_id: usuarioActual.id,
-      medico_nombre: medicoActual.nombre,
-      especialidad_medico: medicoActual.esp,
-      titulo: 'Nota',
-      descripcion: texto,
-      tipo_documento: 'nota'
-    });
-    if (!error) {
-      nueva.guardado = true;
-      // Actualiza solo el timestamp en el DOM sin re-render completo
-      pantallaChat(medicoActual.id);
-    }
-  } else {
-    nueva.guardado = true;
-  }
-}
-
-function nuevaConsultaHoy() {
-  const hoy = new Date().toLocaleDateString('es-MX', {day:'numeric', month:'long', year:'numeric'});
-  medicoActual.visitas.push({ id: 'sys_' + Date.now(), sistema: hoy + ' — Nueva consulta' });
-  pantallaChat(medicoActual.id);
+  APP.expedientes.unshift(nuevo);
+  expedienteActual = nuevo;
+  pantallaLista();
 }
 
 // ─── AGREGAR MÉDICO ───────────────────────────────────────
 function agregarMedico() {
   render(`
     <div class="topbar">
-      <button class="back" onclick="pantallaLista()">←</button>
-      <div class="topbar-title"><p class="t">Nuevo médico</p><p class="s">Agrega una carpeta de consultas</p></div>
+      <button class="ico-btn" onclick="pantallaLista()" style="font-size:22px">‹</button>
+      <div class="ttl"><p class="t">Nuevo médico</p><p class="s">Nueva carpeta de consultas</p></div>
     </div>
-    <div class="screen" style="padding:24px 20px;gap:14px">
-      <p style="margin:0;font-size:13px;color:var(--ink-soft)">¿Con qué médico tuviste consulta?</p>
-      <input id="nm-nombre" placeholder="Nombre del médico" autocomplete="off"
-        style="width:100%;border:1px solid var(--line);border-radius:12px;padding:13px 16px;font-size:15px;background:var(--bg);color:var(--ink);outline:none"/>
-      <select id="nm-esp"
-        style="width:100%;border:1px solid var(--line);border-radius:12px;padding:13px 16px;font-size:14px;background:var(--bg);color:var(--ink);outline:none">
-        <option value="">Especialidad...</option>
+    <div class="screen scroll section-pad" style="gap:8px">
+      <p style="font-size:13px;color:var(--ink-soft);margin-bottom:8px">¿Con qué médico tuviste consulta?</p>
+      <label class="form-label">Nombre del médico</label>
+      <input id="mn-nombre" class="form-input" placeholder="ej. Dr. González Ruiz"/>
+      <label class="form-label">Especialidad</label>
+      <select id="mn-esp" class="form-select">
+        <option value="">Selecciona especialidad...</option>
         <option>Médico general</option><option>Cardiología</option><option>Dermatología</option>
-        <option>Dermatología Oncológica</option><option>Ginecología</option><option>Neurología</option>
-        <option>Oftalmología</option><option>Ortopedia</option><option>Psiquiatría</option>
-        <option>Endocrinología</option><option>Gastroenterología</option><option>Urología</option>
-        <option>Traumatología</option><option>Otra especialidad</option>
+        <option>Ginecología</option><option>Neurología</option><option>Oftalmología</option>
+        <option>Ortopedia</option><option>Pediatría</option><option>Psiquiatría</option>
+        <option>Endocrinología</option><option>Gastroenterología</option>
+        <option>Urología</option><option>Traumatología</option><option>Geriatría</option>
+        <option>Medicina del deporte</option><option>Otra especialidad</option>
       </select>
-      <button onclick="confirmarMedico()"
-        style="width:100%;background:var(--navy);color:white;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px">
-        Crear carpeta
-      </button>
+      <label class="form-label">¿Cuándo fue la primera consulta? (opcional)</label>
+      <input id="mn-fecha" type="date" class="form-input"/>
+      <button class="btn-primary" style="margin-top:8px" onclick="confirmarMedico()">Crear carpeta</button>
     </div>
-  `);
+  `,'adelante');
 }
 
 function confirmarMedico() {
-  const nombre = document.getElementById('nm-nombre')?.value?.trim();
-  const esp = document.getElementById('nm-esp')?.value;
+  const nombre = document.getElementById('mn-nombre')?.value?.trim();
   if (!nombre) { alert('Escribe el nombre del médico'); return; }
+  const esp   = document.getElementById('mn-esp')?.value||'Médico';
+  const fecha = document.getElementById('mn-fecha')?.value||new Date().toISOString().split('T')[0];
+  const hoy   = new Date().toLocaleDateString('es-MX',{day:'numeric',month:'long',year:'numeric'});
   const nuevo = {
-    id: 'med_' + Date.now(),
-    nombre, esp: esp || 'Médico',
-    ini: inicialesNombre(nombre),
-    color: colorEsp(esp),
-    ultimo: 'Sin consultas todavía',
-    fecha: new Date().toLocaleDateString('es-MX', {day:'numeric',month:'short',year:'numeric'}),
-    visitas: [{
-      id: 'sys_' + Date.now(),
-      sistema: new Date().toLocaleDateString('es-MX', {day:'numeric',month:'long',year:'numeric'}) + ' — Primera consulta registrada'
-    }]
+    id:'med_'+Date.now(), nombre, esp,
+    ini:iniciales(nombre), color:colorEsp(esp),
+    ultimo:'Sin consultas todavía', fecha,
+    visitas:[{id:'sys_'+Date.now(), sistema: hoy+' — Primera consulta registrada'}]
   };
-  D.medicos.unshift(nuevo);
+  expedienteActual.medicos.unshift(nuevo);
+  medicoActual = nuevo;
   pantallaChat(nuevo.id);
 }
 
-// ─── COLORES POR ESPECIALIDAD ─────────────────────────────
-const COLORES_ESP = {
-  'Dermatología': '#7C3AED', 'Cardiología': '#DC2626', 'Ginecología': '#DB2777',
-  'Neurología': '#1D4ED8', 'Ortopedia': '#B45309', 'Oftalmología': '#0369A1',
-  'default': '#059669'
-};
-function colorEsp(esp) {
-  return COLORES_ESP[esp] || COLORES_ESP.default;
-}
-function inicialesNombre(nombre) {
-  return nombre.split(' ').slice(0,2).map(p=>p[0]).join('').toUpperCase();
-}
-
 // ─── AUTH ─────────────────────────────────────────────────
-let usuarioActual = null;
-
 function pantallaLogin() {
   render(`
-    <div class="topbar" style="justify-content:center;padding:24px 16px">
-      <div class="topbar-brand" style="font-size:26px">Luisa<span>.</span></div>
+    <div class="topbar" style="justify-content:center;padding:22px 16px">
+      <div class="brand" style="font-size:24px">Luisa<span>.</span></div>
     </div>
-    <div class="screen" style="align-items:center;justify-content:center;padding:32px 24px;gap:16px">
-      <div style="font-size:48px;margin-bottom:8px">🗂️</div>
-      <p style="margin:0;font-size:18px;font-weight:700;color:var(--ink);text-align:center">Tu expediente médico</p>
-      <p style="margin:0;font-size:14px;color:var(--ink-soft);text-align:center;line-height:1.6">
-        Organizado por médico, con IA que lee tus documentos.
+    <div class="screen" style="align-items:center;justify-content:center;padding:32px 24px;gap:14px">
+      <div style="font-size:52px;margin-bottom:6px">🗂️</div>
+      <p style="font-size:18px;font-weight:700;color:var(--ink);text-align:center">Tu expediente médico</p>
+      <p style="font-size:13.5px;color:var(--ink-soft);text-align:center;line-height:1.65">
+        Organizado por médico, con IA que lee tus documentos.<br>Gestiona tu familia desde aquí.
       </p>
-      <div style="width:100%;margin-top:16px">
-        <input id="inp-email" type="email" placeholder="tu@correo.com" autocomplete="email"
-          style="width:100%;border:1px solid var(--line);border-radius:12px;padding:13px 16px;font-size:15px;background:var(--bg);color:var(--ink);outline:none;margin-bottom:10px"/>
-        <button onclick="enviarMagicLink()"
-          style="width:100%;background:var(--navy);color:white;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:700;cursor:pointer">
-          Entrar con enlace mágico
-        </button>
+      <div style="width:100%;margin-top:12px">
+        <input id="inp-email" type="email" class="form-input" placeholder="tu@correo.com" autocomplete="email"/>
+        <button class="btn-primary" onclick="enviarMagicLink()">Entrar con enlace mágico</button>
       </div>
-      <button onclick="usarDemo()"
-        style="background:none;border:none;color:var(--teal-deep);font-size:13px;cursor:pointer;text-decoration:underline;margin-top:4px">
+      <button onclick="usarDemo()" style="background:none;border:none;color:var(--teal-deep);font-size:13px;cursor:pointer;text-decoration:underline;margin-top:6px">
         Ver demo sin cuenta
       </button>
     </div>
   `);
 }
 
-function pantallaEsperandoLink(email) {
+function pantallaEsperando(email) {
   render(`
-    <div class="topbar" style="justify-content:center;padding:24px 16px">
-      <div class="topbar-brand" style="font-size:26px">Luisa<span>.</span></div>
+    <div class="topbar" style="justify-content:center;padding:22px 16px">
+      <div class="brand" style="font-size:24px">Luisa<span>.</span></div>
     </div>
-    <div class="screen" style="align-items:center;justify-content:center;padding:32px 24px;gap:16px">
+    <div class="screen" style="align-items:center;justify-content:center;padding:32px 24px;gap:14px">
       <div style="font-size:52px">📬</div>
-      <p style="margin:0;font-size:17px;font-weight:700;color:var(--ink);text-align:center">Revisa tu correo</p>
-      <p style="margin:0;font-size:14px;color:var(--ink-soft);text-align:center;line-height:1.6">
-        Enviamos un enlace a <strong>${email}</strong>.<br>Tócalo para entrar.
+      <p style="font-size:17px;font-weight:700;color:var(--ink);text-align:center">Revisa tu correo</p>
+      <p style="font-size:13.5px;color:var(--ink-soft);text-align:center;line-height:1.65">
+        Enviamos un enlace a <strong>${email}</strong>.<br>Tócalo para entrar a tu expediente.
       </p>
-      <button onclick="pantallaLogin()"
-        style="margin-top:16px;background:none;border:1px solid var(--line);border-radius:12px;padding:11px 24px;font-size:13.5px;color:var(--ink-soft);cursor:pointer">
+      <button onclick="pantallaLogin()" style="margin-top:12px;background:none;border:1px solid var(--line);border-radius:12px;padding:11px 24px;font-size:13.5px;color:var(--ink-soft);cursor:pointer">
         Usar otro correo
       </button>
     </div>
@@ -815,206 +947,32 @@ function pantallaEsperandoLink(email) {
 async function enviarMagicLink() {
   const email = document.getElementById('inp-email')?.value?.trim();
   if (!email) return;
-  const btn = document.querySelector('button[onclick="enviarMagicLink()"]');
-  if (btn) { btn.disabled = true; btn.textContent = 'Enviando...'; }
-  const { error } = await db.auth.signInWithOtp({
-    email,
-    options: { emailRedirectTo: window.location.href }
-  });
-  if (error) {
-    alert('Error: ' + error.message);
-    if (btn) { btn.disabled = false; btn.textContent = 'Entrar con enlace mágico'; }
-  } else {
-    pantallaEsperandoLink(email);
-  }
+  const btn = document.querySelector('[onclick="enviarMagicLink()"]');
+  if (btn) { btn.disabled=true; btn.textContent='Enviando...'; }
+  const {error} = await db.auth.signInWithOtp({email, options:{emailRedirectTo:window.location.href}});
+  if (error) { alert('Error: '+error.message); if(btn){btn.disabled=false;btn.textContent='Entrar con enlace mágico';} }
+  else pantallaEsperando(email);
 }
 
-function usarDemo() {
-  usuarioActual = null;
-  pantallaLista();
-}
+function usarDemo() { usuarioActual=null; expedienteActual=APP.expedientes[0]; pantallaExpedientes(); }
 
-async function cerrarSesion() {
-  await db.auth.signOut();
-  usuarioActual = null;
-  pantallaLogin();
-}
-
-// ─── CARGA DE DATOS REALES ────────────────────────────────
-async function cargarMedicos(userId) {
-  const { data, error } = await db
-    .from('eventos_salud')
-    .select('medico_nombre, especialidad_medico, created_at, titulo, resumen_ia')
-    .eq('perfil_id', userId)
-    .order('created_at', { ascending: false });
-
-  if (error || !data || data.length === 0) return null;
-
-  const byDoc = {};
-  data.forEach(e => {
-    const key = e.medico_nombre || 'Sin médico';
-    if (!byDoc[key]) {
-      byDoc[key] = {
-        id: key,
-        nombre: key,
-        esp: e.especialidad_medico || 'Médico',
-        ini: inicialesNombre(key),
-        color: colorEsp(e.especialidad_medico),
-        ultimo: e.titulo || e.resumen_ia || '—',
-        fecha: new Date(e.created_at).toLocaleDateString('es-MX', {day:'numeric',month:'short',year:'numeric'}),
-        visitas: []
-      };
-    }
-  });
-
-  for (const key of Object.keys(byDoc)) {
-    const { data: eventos } = await db
-      .from('eventos_salud')
-      .select('*')
-      .eq('perfil_id', userId)
-      .eq('medico_nombre', key)
-      .order('created_at', { ascending: true });
-
-    if (eventos) {
-      byDoc[key].visitas = eventos.map(e => ({
-        id: e.id,
-        lado: 'yo',
-        tag: e.foto_url ? 'doc' : 'nota',
-        tagLabel: e.foto_url ? '📄 ' + (e.titulo || 'Documento') : '📝 Nota',
-        cuerpo: e.descripcion || e.titulo || '—',
-        ia: e.resumen_ia || null,
-        hora: new Date(e.created_at).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit'}),
-        foto_url: e.foto_url || null
-      }));
-    }
-  }
-
-  return Object.values(byDoc);
-}
-
-async function cargarPerfil(userId) {
-  const { data } = await db.from('perfiles_luisa').select('*').eq('id', userId).single();
-  return data;
-}
-
-// ─── SUBIDA DE FOTO REAL ──────────────────────────────────
-async function subirFotoReal(file, userId) {
-  const ext = file.name.split('.').pop();
-  const path = `${userId}/${Date.now()}.${ext}`;
-  const { error: upErr } = await db.storage.from('luisa-fotos').upload(path, file);
-  if (upErr) throw upErr;
-  const { data: { publicUrl } } = db.storage.from('luisa-fotos').getPublicUrl(path);
-  return publicUrl;
-}
-
-async function llamarIA(fotoUrl) {
-  const res = await fetch('/.netlify/functions/procesar-documento', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ foto_url: fotoUrl })
-  });
-  if (!res.ok) return null;
-  return res.json();
-}
-
-// ─── SEED DE DATOS DEMO A SUPABASE ───────────────────────
-async function seedDemoSiEstaVacio(userId) {
-  // Solo hace seed si el usuario no tiene eventos todavía
-  const { count } = await db
-    .from('eventos_salud')
-    .select('id', { count: 'exact', head: true })
-    .eq('perfil_id', userId);
-
-  if (count > 0) return; // Ya tiene datos, no sobreescribir
-
-  const filas = [];
-  for (const med of D.medicos) {
-    for (const v of med.visitas) {
-      if (v.sistema) continue; // separadores no se guardan
-      filas.push({
-        perfil_id: userId,
-        medico_nombre: med.nombre,
-        especialidad_medico: med.esp,
-        titulo: v.tagLabel?.replace(/^[^\s]+ /, '') || v.tag,
-        descripcion: v.cuerpo,
-        resumen_ia: v.ia || null,
-        tipo_documento: v.tag === 'doc' ? 'documento' : 'nota',
-        created_at: fechaDemoParaVisita(v.id)
-      });
-    }
-  }
-
-  if (filas.length > 0) {
-    await db.from('eventos_salud').insert(filas);
-    console.log(`Luisa: ${filas.length} eventos de demo cargados a Supabase`);
-  }
-
-  // Actualizar perfil con datos del paciente demo
-  await db.from('perfiles_luisa').upsert({
-    id: userId,
-    nombre_completo: D.paciente.nombre,
-    tipo_sangre: D.paciente.sangre,
-    alergias_conocidas: D.paciente.alergias,
-    updated_at: new Date().toISOString()
-  }, { onConflict: 'id' });
-}
-
-// Fechas aproximadas para los eventos demo (por id)
-function fechaDemoParaVisita(id) {
-  const mapa = {
-    v1:'2022-10-05', v2:'2023-06-14', v3:'2023-06-14',
-    v4:'2025-01-03', v5:'2025-01-03', v6:'2025-07-14',
-    v7:'2025-05-08', v8:'2025-05-08', v9:'2025-05-08',
-    v10:'2025-05-08', v11:'2025-08-18', v12:'2022-01-15',
-    v13:'2023-03-10', v14:'2025-02-12', v15:'2025-02-12',
-    v16:'2023-09-08', v17:'2023-09-08', v18:'2024-04-10',
-    v19:'2024-04-10', v20:'2023-11-20', v21:'2023-11-20',
-    v22:'2025-03-05', v23:'2024-04-03', v24:'2024-04-03',
-    v25:'2024-06-22',
-  };
-  return mapa[id] ? new Date(mapa[id]).toISOString() : new Date().toISOString();
-}
+async function cerrarSesion() { await db.auth.signOut(); usuarioActual=null; pantallaLogin(); }
 
 // ─── INIT ─────────────────────────────────────────────────
 async function init() {
   render(`<div style="display:flex;align-items:center;justify-content:center;height:300px;color:var(--ink-faint);font-size:14px">Cargando...</div>`);
-
-  // Manejar magic link callback
   const hash = window.location.hash;
   if (hash && hash.includes('access_token')) {
-    const { data: { session } } = await db.auth.getSession();
-    if (session) {
-      window.history.replaceState(null, '', window.location.pathname);
-      usuarioActual = session.user;
-    }
+    const {data:{session}} = await db.auth.getSession();
+    if (session) { window.history.replaceState(null,'',window.location.pathname); usuarioActual=session.user; }
   } else {
-    const { data: { session } } = await db.auth.getSession();
-    if (session) usuarioActual = session.user;
+    const {data:{session}} = await db.auth.getSession();
+    if (session) usuarioActual=session.user;
   }
-
-  if (!usuarioActual) {
-    pantallaLogin();
-    return;
-  }
-
-  // Seed de datos demo si el usuario es nuevo (solo primera vez)
-  await seedDemoSiEstaVacio(usuarioActual.id);
-
-  // Cargar datos reales
-  const [perfil, medicosDB] = await Promise.all([
-    cargarPerfil(usuarioActual.id),
-    cargarMedicos(usuarioActual.id)
-  ]);
-
-  if (perfil) {
-    D.paciente.nombre = perfil.nombre_completo || usuarioActual.email;
-    if (perfil.tipo_sangre) D.paciente.sangre = perfil.tipo_sangre;
-    if (perfil.alergias_conocidas) D.paciente.alergias = perfil.alergias_conocidas;
-  }
-
-  if (medicosDB && medicosDB.length > 0) D.medicos = medicosDB;
-
-  pantallaLista();
+  if (!usuarioActual) { pantallaLogin(); return; }
+  // Usuario autenticado: mostrar expediente principal (el suyo)
+  expedienteActual = APP.expedientes[0];
+  pantallaExpedientes();
 }
 
 init();
